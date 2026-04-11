@@ -1,0 +1,78 @@
+@startuml DM
+title Domain Model - MedManager
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+top to bottom direction
+
+class Employee {
+    - id
+    - name
+    - phone
+}
+
+class CenterAdministrator extends Employee {
+}
+
+class Nurse extends Employee {
+}
+
+class Receptionist extends Employee {
+}
+
+class HealthcareCenter {
+    - name
+    - address
+    - openingHours
+    - closingHours
+    - vaccinesPerHourCapacity
+}
+
+class SNSUser {
+    - snsNumber
+    - citizenCardNumber
+    - name
+    - birthdate
+}
+
+class Appointment {
+    - dateTime
+    - status
+}
+
+class VaccinationProcess {
+    - dateTime
+    - lotNumber
+    - adverseReaction
+}
+
+class Vaccine {
+    - commercialName
+    - brand
+    - expirationDate
+}
+
+class VaccineType {
+    - code
+    - disease
+    - description
+}
+
+
+HealthcareCenter "1" -down-- "0..*" Employee : employs >
+HealthcareCenter "1" -right-- "0..*" VaccineType : provides >
+
+
+Receptionist "1" -down-- "0..*" SNSUser: registers >
+Receptionist "1" -down-- "0..*" Appointment : confirms >
+
+SNSUser "1" -down-- "0..*" Appointment : schedules >
+Appointment "0..*" -right-- "1" VaccineType : for >
+
+Appointment "1" -down-- "0..1" VaccinationProcess : results in >
+VaccinationProcess "0..*" -left-- "1" Nurse : executed by >
+VaccinationProcess "0..*" -right-- "1" Vaccine : uses >
+
+Vaccine "0..*" -up-- "1" VaccineType : of type >
+
+@enduml
