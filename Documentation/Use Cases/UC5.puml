@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+title UC5 - List of Employees
+
+actor Admin
+participant "System"
+
+Admin -> System: getEmployeesByRole(role)
+System --> Admin: employee list
+
+@enduml

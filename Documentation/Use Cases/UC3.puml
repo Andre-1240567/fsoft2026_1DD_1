@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+title UC3 - List of Vaccines
+
+actor Admin
+participant "System"
+
+Admin -> System: getVaccineStock()
+System --> Admin: grouped list
+
+@enduml

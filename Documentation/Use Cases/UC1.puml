@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+title UC1 - Create Vaccine type
+
+Actor Admin
+ participant "System"
+
+ Admin -> System: createVaccineType(type)
+ System --> Admin: confirmation
+
+@enduml

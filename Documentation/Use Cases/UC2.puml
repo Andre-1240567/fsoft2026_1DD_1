@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+title UC2 - Register Vaccine
+
+Actor Admin
+participant "System"
+
+Admin -> System: registerVaccine(lotNumber, brand, expDate, type)
+System --> Admin: confirmation
+
+@enduml

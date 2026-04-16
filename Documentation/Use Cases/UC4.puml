@@ -1,0 +1,11 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+title UC4 - Register Employee
+
+actor Admin
+participant "System"
+
+Admin -> System: registerEmployee(name, phone, email, role)
+System --> Admin: confirmation
+
+@enduml
