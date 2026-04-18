@@ -2,10 +2,17 @@
 'https://plantuml.com/use-case-diagram
 title UC1 - Create Vaccine type
 
-Actor Admin
- participant "System"
+actor Administrator as Admin
+participant ":System" as System
 
- Admin -> System: createVaccineType(type)
- System --> Admin: confirmation
+
+Admin -> System: Requests to create a new vaccine type
+activate System
+System --> Admin: Asks for the vaccine type data
+deactivate System
+Admin -> System: Inputs the requested data
+activate System
+System --> Admin: Confirms yhe new vaccine type
+deactivate System
 
 @enduml

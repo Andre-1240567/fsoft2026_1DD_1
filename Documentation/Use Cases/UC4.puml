@@ -2,10 +2,18 @@
 'https://plantuml.com/use-case-diagram
 title UC4 - Register Employee
 
-actor Admin
-participant "System"
+actor "Center Administrator" as Admin
+participant ":System" as System
 
-Admin -> System: registerEmployee(name, phone, email, role)
-System --> Admin: confirmation
+autonumber
+
+Admin -> System: Requests to register a new employee
+activate System
+System --> Admin: Asks for the employee's information (Name, Phone, Email, CC, Role)
+deactivate System
+Admin -> System: Submits the employee's information
+activate System
+System --> Admin: Validates data and confirms employee registration
+deactivate System
 
 @enduml

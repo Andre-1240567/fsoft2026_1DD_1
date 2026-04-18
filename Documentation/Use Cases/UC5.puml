@@ -2,10 +2,18 @@
 'https://plantuml.com/use-case-diagram
 title UC5 - List of Employees
 
-actor Admin
-participant "System"
+actor "Center Administrator" as Admin
+participant ":System" as System
 
-Admin -> System: getEmployeesByRole(role)
-System --> Admin: employee list
+autonumber
+
+Admin -> System: Requests a list of employees
+activate System
+System --> Admin: Asks to select the function/role (Nurse, Receptionist, Admin)
+deactivate System
+Admin -> System: Selects the specific function/role
+activate System
+System --> Admin: Shows the list of employees assigned to that function
+deactivate System
 
 @enduml

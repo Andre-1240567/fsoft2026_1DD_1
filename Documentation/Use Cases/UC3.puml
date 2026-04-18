@@ -2,10 +2,14 @@
 'https://plantuml.com/use-case-diagram
 title UC3 - List of Vaccines
 
-actor Admin
-participant "System"
+actor "Center Administrator" as Admin
+participant ":System" as System
 
-Admin -> System: getVaccineStock()
-System --> Admin: grouped list
+autonumber
+
+Admin -> System: Requests to get a list of the vaccine stock
+activate System
+System --> Admin: Shows the list (grouped by type and ordered by brand)
+deactivate System
 
 @enduml
