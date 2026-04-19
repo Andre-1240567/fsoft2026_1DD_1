@@ -1,0 +1,20 @@
+@startuml UCD_Admin_Sprint
+title Use Case Diagram
+left to right direction
+
+
+actor "Center Administrator" as Admin
+
+    usecase "UC1 - Create Vaccine Type" as UC1
+    usecase "UC2 - Register Physical Vaccine" as UC2
+    usecase "UC3 - List Vaccines Stock" as UC3
+    usecase "UC4 - Register Employee" as UC4
+    usecase "UC5 - List Employees by Role" as UC5
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+
+@enduml

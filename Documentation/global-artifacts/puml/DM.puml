@@ -1,4 +1,4 @@
-@startuml DM
+@startuml DM_Simplified_With_Reaction
 title Domain Model - MedManager
 skinparam classAttributeIconSize 0
 hide circle
@@ -8,7 +8,10 @@ top to bottom direction
 class Employee {
     - id
     - name
+    - address
     - phone
+    - email
+    - citizenCardNumber
 }
 
 class CenterAdministrator extends Employee {
@@ -23,9 +26,18 @@ class Receptionist extends Employee {
 class HealthcareCenter {
     - name
     - address
+    - phone
+    - email
+    - website
     - openingHours
     - closingHours
     - vaccinesPerHourCapacity
+}
+
+class WaitingRoom {
+}
+
+class RecoveryRoom {
 }
 
 class SNSUser {
@@ -40,15 +52,20 @@ class Appointment {
     - status
 }
 
+class AdverseReaction {
+    - dateTime
+    - description
+}
+
 class VaccinationProcess {
     - dateTime
     - lotNumber
-    - adverseReaction
 }
 
 class Vaccine {
     - commercialName
     - brand
+    - technology
     - expirationDate
 }
 
@@ -58,20 +75,32 @@ class VaccineType {
     - description
 }
 
+' --- RELATIONS ---
 
+HealthcareCenter "1" *-- "1" WaitingRoom : has >
+HealthcareCenter "1" *-- "1" RecoveryRoom : has >
 HealthcareCenter "1" -down-- "0..*" Employee : employs >
 HealthcareCenter "1" -right-- "0..*" VaccineType : provides >
+HealthcareCenter "1" -down-- "0..*" Vaccine : stores (inventory) >
+
+
+WaitingRoom "1" o-- "0..*" SNSUser : contains >
+RecoveryRoom "1" o-- "0..*" SNSUser : contains >
 
 
 Receptionist "1" -down-- "0..*" SNSUser: registers >
 Receptionist "1" -down-- "0..*" Appointment : confirms >
 
+
 SNSUser "1" -down-- "0..*" Appointment : schedules >
 Appointment "0..*" -right-- "1" VaccineType : for >
 
+
 Appointment "1" -down-- "0..1" VaccinationProcess : results in >
 VaccinationProcess "0..*" -left-- "1" Nurse : executed by >
-VaccinationProcess "0..*" -right-- "1" Vaccine : uses >
+VaccinationProcess "0..1" -right-- "1" Vaccine : uses (1 dose) >
+VaccinationProcess "1" -down-- "0..1" AdverseReaction : registers >
+
 
 Vaccine "0..*" -up-- "1" VaccineType : of type >
 

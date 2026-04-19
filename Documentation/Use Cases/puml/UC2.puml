@@ -1,0 +1,36 @@
+@startuml SSD_RegisterVaccine
+title SSD: UC2 - Register Physical Vaccine
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+
+activate Admin
+Admin -> System: starts the registration of a physical vaccine dose
+activate System
+System --> Admin: shows a list of existing vaccine types and asks to select one
+deactivate System
+
+Admin -> System: selects the corresponding vaccine type
+activate System
+System --> Admin: shows a predefined list of vaccine technologies and asks to select one
+deactivate System
+
+Admin -> System: selects the technology
+activate System
+System --> Admin: requests the remaining vaccine details (commercial name, brand, expiration date)
+deactivate System
+
+Admin -> System: inputs the requested data
+activate System
+System --> Admin: shows the inputted data and requests confirmation
+deactivate System
+
+Admin -> System: confirms the data
+activate System
+System --> Admin: registers the physical vaccine in the inventory and informs operation success
+deactivate System
+deactivate Admin
+
+@enduml

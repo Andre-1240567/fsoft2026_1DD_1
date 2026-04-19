@@ -1,0 +1,21 @@
+@startuml SSD_ListEmployees
+title SSD: UC5 - List Employees by Role
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+
+activate Admin
+Admin -> System: requests a list of employees
+activate System
+System --> Admin: shows the available roles (Nurse, Receptionist) and asks to select one
+deactivate System
+
+Admin -> System: selects the intended role
+activate System
+System --> Admin: shows the list of employees assigned to the selected role
+deactivate System
+deactivate Admin
+
+@enduml
