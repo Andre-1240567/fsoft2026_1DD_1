@@ -1,0 +1,17 @@
+@startuml SSD_ListVaccines
+title SSD: UC3 - List of Vaccines Stock
+
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+
+activate Admin
+Admin -> System: requests a list of the physical vaccine stock
+activate System
+System --> Admin: shows the inventory (grouped by type and listed alphabetically by brand)
+deactivate System
+deactivate Admin
+
+@enduml

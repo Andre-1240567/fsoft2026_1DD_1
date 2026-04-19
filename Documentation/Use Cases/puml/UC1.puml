@@ -1,0 +1,26 @@
+@startuml SSD_CreateVaccineType
+title SSD: UC1 - Create Vaccine Type
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+
+activate Admin
+Admin -> System: starts the creation of a new vaccine type
+activate System
+System --> Admin: requests the necessary data (code, disease, description)
+deactivate System
+
+Admin -> System: inputs the requested data
+activate System
+System --> Admin: shows the inputted data and requests confirmation
+deactivate System
+
+Admin -> System: confirms the data
+activate System
+System --> Admin: registers the new vaccine type and informs operation success
+deactivate System
+deactivate Admin
+
+@enduml
