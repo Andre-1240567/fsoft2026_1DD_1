@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+title UC2 - Register Vaccine
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+
+Admin -> System: Requests to register a vaccine
+activate System
+System --> Admin: Asks for vaccine type
+deactivate System
+Admin -> System: Inputs the type of the vaccine
+activate System
+System --> Admin: Shows input fields for vaccine info (Lot Number, Brand, Expiration Date)
+deactivate System
+Admin -> System: Submits the vaccine's information
+activate System
+System --> Admin: Confirms vaccine registration
+deactivate System
+
+@enduml
