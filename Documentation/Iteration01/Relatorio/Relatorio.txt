@@ -1,0 +1,849 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fsoft2026 1DD: Iteration 1 -- Technical Report
+% MedManager – Local C++ Vaccination System
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[runningheads,a4paper]{llncs}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb}
+\setcounter{tocdepth}{3}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{array}
+\usepackage{float}
+
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+\begin{document}
+\mainmatter
+
+% ====================================================================
+% TÍTULO
+% ====================================================================
+\title{fsoft2026 1DD: Iteration 1 -- Technical Report\\
+Domain Model, Glossary,\\
+Functional and Non-Functional Requirements,\\
+System Sequence Diagram}
+
+\titlerunning{fsoft2026 1DD: Iteration 1 -- Technical Report}
+
+% ====================================================================
+% AUTORES
+% ====================================================================
+\author{
+  Andr\'e Moreira \and
+  Gon\c{c}alo Oliveira \and
+  Pedro Guilherme
+}
+
+\authorrunning{A. Moreira, G. Oliveira and P. Guilherme}
+
+% ====================================================================
+% AFILIAÇÃO
+% ====================================================================
+\institute{
+  ISEP, Instituto Superior de Engenharia do Porto,\\
+  Rua do Dr~Ant\'onio Bernardino de Almeida 431, 4249-015 Porto, Portugal\\
+  \email{\{1240567,1241757,1242036\}@isep.ipp.pt}\\
+  \url{https://www.isep.ipp.pt}
+}
+
+\toctitle{fsoft2026 1DD: Iteration 1 -- Technical Report}
+\tocauthor{A. Moreira, G. Oliveira and P. Guilherme}
+\maketitle
+
+% ====================================================================
+% ABSTRACT
+% ====================================================================
+\begin{abstract}
+In the following pages, the reader will be able to be informed about the
+application's domain model, glossary, functional and non-functional
+requirements, containing use cases and their specifications, and system
+sequence diagrams (SSD) for the MedManager project.
+
+\keywords{Business, C++, Vaccination Center, MedManager, Management,
+Software Development, Command-line Interface, Health}
+\end{abstract}
+
+% ====================================================================
+% ÍNDICE
+% ====================================================================
+\newpage
+\tableofcontents
+\newpage
+
+% ====================================================================
+\section{Introduction}
+% ====================================================================
+
+The MedManager project is a stand-alone management system designed for a
+single local vaccination center. It focuses on the control of physical
+vaccine stock, appointment scheduling, and the end-to-end vaccination
+process.
+
+We named the application being developed in this project
+``\textbf{MedManager}''. The system's architecture incorporates four
+key stakeholder interfaces, each serving distinct but interconnected
+roles within the MedManager ecosystem:
+
+\begin{itemize}
+  \item \textbf{Center Administrator:} Responsible for internal
+        management, including specifying vaccine types, registering
+        physical doses, and managing employee records.
+  \item \textbf{Receptionist:} Responsible for registering SNS users,
+        scheduling administrations, and registering patient arrivals.
+  \item \textbf{Nurse:} Responsible for consulting the waiting room and
+        recording the administration of vaccines.
+  \item \textbf{SNS User:} Intends to use the application to schedule a
+        vaccine administration.
+\end{itemize}
+
+The objective of MedManager is to provide a reliable solution that
+optimizes all operations related to the vaccination process at a local
+center. The system will be developed in C++, which is the programming
+language taught in this class.
+
+% ====================================================================
+\section{Domain Model}
+% ====================================================================
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{imagens/domain_model}
+  \caption{MedManager's Domain Model}
+  \label{fig:domain-model}
+\end{figure}
+
+% ====================================================================
+\section{Glossary}
+% ====================================================================
+
+The following glossary defines the core technical terms used throughout
+the MedManager system.
+
+\begin{table}[H]
+\caption{MedManager Glossary}
+\label{tab:glossary}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.8cm}
+                    >{\raggedright\arraybackslash}p{2.8cm}
+                    >{\raggedright\arraybackslash}p{6.0cm}@{}}
+\hline
+\textbf{Term/Expression (EN)} & \textbf{Termo (PT)} &
+\textbf{Definition/Description} \\
+\hline
+Center Administrator & Administrador do Centro &
+  Employee responsible for managing and configuring the healthcare
+  center's capacities and settings. \\[4pt]
+Appointment & Agendamento &
+  A scheduled slot (date and time) for an SNS User to receive a
+  specific type of vaccine. \\[4pt]
+Healthcare Center & Centro de Sa\'ude &
+  The physical facility where vaccinations take place, defined by its
+  operating hours and hourly capacity. \\[4pt]
+Nurse & Enfermeiro &
+  Healthcare professional responsible for administering vaccines and
+  recording the vaccination process details. \\[4pt]
+Employee & Funcion\'ario &
+  General entity representing anyone working at the center, identified
+  by ID, name, and phone number. \\[4pt]
+Vaccination Process & Processo de Vacina\c{c}\~ao &
+  The actual record of vaccine administration, including lot number
+  and adverse reactions. \\[4pt]
+Receptionist & Rececionista &
+  Employee who manages user registration and confirms appointments upon
+  the user's arrival. \\[4pt]
+Vaccine Type & Tipo de Vacina &
+  A category of vaccines defined by the disease they target
+  (e.g., COVID-19, Influenza). \\[4pt]
+SNS User & Utente do SNS &
+  A citizen registered in the National Health Service who is eligible
+  to receive vaccinations. \\[4pt]
+Vaccine & Vacina &
+  The specific commercial product and brand used during the vaccination
+  process. \\
+\hline
+\end{tabular}
+\end{table}
+
+% ====================================================================
+\section{Non-Functional Requirements}
+% ====================================================================
+
+\subsection{Usability}
+\begin{itemize}
+  \item Command-line based user interface
+  \item Informative, yet simple, error messages
+  \item Easy-to-use option menus
+\end{itemize}
+
+\subsection{Reliability}
+\begin{itemize}
+  \item Data storage must be reliable
+  \item System must be available at any time
+  \item Validation of all user inputs, including Portuguese-format
+        phone numbers and citizen card numbers
+\end{itemize}
+
+\subsection{Performance}
+\begin{itemize}
+  \item Response time under 1 second for all operations
+\end{itemize}
+
+\subsection{Supportability}
+\begin{itemize}
+  \item Full application support through GitHub repository
+  \item Recurrent application testing
+\end{itemize}
+
+\subsection{Design Constraints}
+\begin{itemize}
+  \item Data persistent and kept in binary files
+  \item No duplicate entries for the same SNS user on the same day
+\end{itemize}
+
+\subsection{Implementation Constraints}
+\begin{itemize}
+  \item C++ programming language
+\end{itemize}
+
+\subsection{Interface Constraints}
+\begin{itemize}
+  \item No graphical interface; interaction is exclusively via
+        command-line
+\end{itemize}
+
+% ====================================================================
+\section{Functional Requirements}
+% ====================================================================
+
+Functional requirements are captured through Use Case Diagrams and
+their corresponding specifications.
+
+% ====================================================================
+\subsection{Actor: Center Administrator}
+% ====================================================================
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\textwidth]{imagens/uc_profile1}
+  \caption{Center Administrator's Use Case Diagram}
+  \label{fig:uc-p1}
+\end{figure}
+
+% ------------------------------------------------------------------ US10
+\subsubsection*{Use Case: Specify New Vaccine Type -- US10
+(Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Specify New Vaccine Type (US10)}
+\label{tab:p1-us10}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Center Administrator \\
+\hline
+\textbf{Use case name}  & Specify New Vaccine Type \\[3pt]
+\textbf{Description}    & The administrator creates a new type of vaccine
+                          in the system. \\[3pt]
+\textbf{Precondition}   & The ``Center Administrator'' user must be
+                          selected. \\[3pt]
+\textbf{Post-condition} & A new VaccineType is saved in the system. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Specify New Vaccine Type'' \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User fills the input space with the vaccine type name
+                and target disease \newline
+  $\rightarrow$ System checks if the information type is correct \newline
+  $\rightarrow$ A new VaccineType is added to the system \\[3pt]
+\textbf{Alternative path} &
+  -- Information type is incorrect \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 1 -- Specify New Vaccine Type}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p1_uc1}
+  \caption{SSD: Center Administrator's UC 1}
+  \label{fig:ssd-p1-1}
+\end{figure}
+
+% ------------------------------------------------------------------ US11
+\subsubsection*{Use Case: Register Physical Vaccine Dose -- US11
+(Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Register Physical Vaccine Dose (US11)}
+\label{tab:p1-us11}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Center Administrator \\
+\hline
+\textbf{Use case name}  & Register Physical Vaccine Dose \\[3pt]
+\textbf{Description}    & The administrator adds a physical vaccine dose
+                          to the center's inventory, including lot number,
+                          brand, and expiration date. \\[3pt]
+\textbf{Precondition}   & The ``Center Administrator'' user must be
+                          selected and at least one VaccineType must exist
+                          in the system. \\[3pt]
+\textbf{Post-condition} & A new Vaccine dose is saved and linked to an
+                          existing VaccineType. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Register Physical Vaccine Dose'' \newline
+  $\rightarrow$ System displays the list of existing vaccine types \newline
+  $\rightarrow$ User selects a vaccine type \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User fills the input space with lot number, brand, and
+                expiration date \newline
+  $\rightarrow$ System checks if the information type is correct \newline
+  $\rightarrow$ A new Vaccine dose is added to the inventory \\[3pt]
+\textbf{Alternative path} &
+  -- Information type is incorrect \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~5 \newline
+  -- No vaccine types exist in the system \newline
+  \quad $\rightarrow$ System sends a ``No Vaccine Types'' message \newline
+  \quad $\rightarrow$ Use case resumes at step~1 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 2 -- Register Physical Vaccine Dose}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p1_uc2}
+  \caption{SSD: Center Administrator's UC 2}
+  \label{fig:ssd-p1-2}
+\end{figure}
+
+% ------------------------------------------------------------------ US12
+\subsubsection*{Use Case: List Vaccine Stock -- US12 (Specification)}
+
+\begin{table}[H]
+\caption{Use Case: List Vaccine Stock (US12)}
+\label{tab:p1-us12}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Center Administrator \\
+\hline
+\textbf{Use case name}  & List Vaccine Stock \\[3pt]
+\textbf{Description}    & A list of all physical vaccine doses available in
+                          the center is shown to the administrator, grouped
+                          by type and sorted alphabetically by brand. \\[3pt]
+\textbf{Precondition}   & The ``Center Administrator'' user must be
+                          selected and at least one vaccine dose must be
+                          registered in the system. \\[3pt]
+\textbf{Post-condition} & None \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``List Vaccine Stock'' \newline
+  $\rightarrow$ System checks if any vaccine doses are registered \newline
+  $\rightarrow$ System displays all doses grouped by VaccineType and
+                sorted alphabetically by brand \\[3pt]
+\textbf{Alternative path} &
+  -- No vaccine doses are registered in the system \newline
+  \quad $\rightarrow$ System sends a ``No Vaccines'' message \newline
+  \quad $\rightarrow$ Use case resumes at step~1 \\[3pt]
+\textbf{Exceptions}     & None \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 3 -- List Vaccine Stock}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p1_uc3}
+  \caption{SSD: Center Administrator's UC 3}
+  \label{fig:ssd-p1-3}
+\end{figure}
+
+% ------------------------------------------------------------------ US14
+\subsubsection*{Use Case: Register New Employee -- US14 (Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Register New Employee (US14)}
+\label{tab:p1-us14}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Center Administrator \\
+\hline
+\textbf{Use case name}  & Register New Employee \\[3pt]
+\textbf{Description}    & The administrator registers a new employee in
+                          the system, assigning them a role (Nurse,
+                          Receptionist, or Administrator). \\[3pt]
+\textbf{Precondition}   & The ``Center Administrator'' user must be
+                          selected. \\[3pt]
+\textbf{Post-condition} & A new Employee is saved in the system with a
+                          unique phone number and e-mail address. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Register New Employee'' \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User fills the input space with name, phone number,
+                e-mail address, citizen card number, and role \newline
+  $\rightarrow$ System checks if the information type is correct and
+                if phone number and e-mail are unique \newline
+  $\rightarrow$ Use case returns to step~3 until all mandatory
+                properties are filled \newline
+  $\rightarrow$ A new Employee is added to the system \\[3pt]
+\textbf{Alternative path} &
+  -- Information type is incorrect or phone/CC not in Portuguese format
+  \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \newline
+  -- Phone number or e-mail already exists in the system \newline
+  \quad $\rightarrow$ User receives a ``Duplicate Data'' error message
+  \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 4 -- Register New Employee}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p1_uc4}
+  \caption{SSD: Center Administrator's UC 4}
+  \label{fig:ssd-p1-4}
+\end{figure}
+
+% ------------------------------------------------------------------ US15
+\subsubsection*{Use Case: List Employees by Role -- US15 (Specification)}
+
+\begin{table}[H]
+\caption{Use Case: List Employees by Role (US15)}
+\label{tab:p1-us15}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Center Administrator \\
+\hline
+\textbf{Use case name}  & List Employees by Role \\[3pt]
+\textbf{Description}    & A list of all employees assigned to a specific
+                          role is shown to the administrator. \\[3pt]
+\textbf{Precondition}   & The ``Center Administrator'' user must be
+                          selected and at least one employee must be
+                          registered in the system. \\[3pt]
+\textbf{Post-condition} & None \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``List Employees by Role'' \newline
+  $\rightarrow$ System displays the available roles \newline
+  $\rightarrow$ User selects a role \newline
+  $\rightarrow$ System checks if any employees are assigned to that
+                role \newline
+  $\rightarrow$ System displays a list of all employees with the
+                selected role \\[3pt]
+\textbf{Alternative path} &
+  -- No employees are assigned to the selected role \newline
+  \quad $\rightarrow$ System sends a ``No Employees'' message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 5 -- List Employees by Role}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p1_uc5}
+  \caption{SSD: Center Administrator's UC 5}
+  \label{fig:ssd-p1-5}
+\end{figure}
+
+% ====================================================================
+\subsection{Actor: Receptionist}
+% ====================================================================
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\textwidth]{imagens/uc_profile2}
+  \caption{Receptionist's Use Case Diagram}
+  \label{fig:uc-p2}
+\end{figure}
+
+% ------------------------------------------------------------------ US20
+\subsubsection*{Use Case: Register SNS User -- US20 (Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Register SNS User (US20)}
+\label{tab:p2-us20}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Receptionist \\
+\hline
+\textbf{Use case name}  & Register SNS User \\[3pt]
+\textbf{Description}    & The receptionist registers a new SNS user in the
+                          system with their personal details. \\[3pt]
+\textbf{Precondition}   & The ``Receptionist'' user must be selected. \\[3pt]
+\textbf{Post-condition} & A new SNSUser is saved in the system with a
+                          unique phone number, e-mail address, citizen card
+                          number, and SNS user number. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Register SNS User'' \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User fills the input space with name, date of birth,
+                sex (optional), phone number, e-mail, citizen card
+                number, and SNS user number \newline
+  $\rightarrow$ System checks if the information type is correct and
+                if all unique fields are not already registered \newline
+  $\rightarrow$ Use case returns to step~3 until all mandatory
+                properties are filled \newline
+  $\rightarrow$ A new SNSUser is added to the system \\[3pt]
+\textbf{Alternative path} &
+  -- Information type is incorrect or phone/CC not in Portuguese format
+  \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \newline
+  -- Phone number, e-mail, CC number, or SNS number already exists
+  \newline
+  \quad $\rightarrow$ User receives a ``Duplicate Data'' error message
+  \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 1 -- Register SNS User}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p2_uc1}
+  \caption{SSD: Receptionist's UC 1}
+  \label{fig:ssd-p2-1}
+\end{figure}
+
+% ------------------------------------------------------------------ US21
+\subsubsection*{Use Case: Schedule Vaccine Administration -- US21
+(Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Schedule Vaccine Administration (US21)}
+\label{tab:p2-us21}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Receptionist \\
+\hline
+\textbf{Use case name}  & Schedule Vaccine Administration \\[3pt]
+\textbf{Description}    & The receptionist schedules a vaccine
+                          administration appointment for a registered
+                          SNS user (in-person or phone scheduling). \\[3pt]
+\textbf{Precondition}   & The ``Receptionist'' user must be selected, the
+                          SNS user must be registered, and at least one
+                          vaccine type must exist in the system. \\[3pt]
+\textbf{Post-condition} & A new Appointment is saved and linked to the
+                          SNS user and the selected vaccine type. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Schedule Vaccine Administration'' \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User inserts the SNS user's number \newline
+  $\rightarrow$ System checks if the SNS user is registered \newline
+  $\rightarrow$ System displays the available vaccine types \newline
+  $\rightarrow$ User selects a vaccine type and a date \newline
+  $\rightarrow$ System checks if the date is valid and the center has
+                capacity \newline
+  $\rightarrow$ A new Appointment is added to the system \\[3pt]
+\textbf{Alternative path} &
+  -- SNS user number is not registered \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \newline
+  -- Selected date has no available capacity \newline
+  \quad $\rightarrow$ System sends a ``No Availability'' message \newline
+  \quad $\rightarrow$ Use case resumes at step~6 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 2 -- Schedule Vaccine Administration}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p2_uc2}
+  \caption{SSD: Receptionist's UC 2}
+  \label{fig:ssd-p2-2}
+\end{figure}
+
+% ------------------------------------------------------------------ US22
+\subsubsection*{Use Case: Register SNS User Arrival -- US22
+(Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Register SNS User Arrival (US22)}
+\label{tab:p2-us22}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Receptionist \\
+\hline
+\textbf{Use case name}  & Register SNS User Arrival \\[3pt]
+\textbf{Description}    & The receptionist registers the arrival of an
+                          SNS user at the vaccination center to take the
+                          scheduled vaccine. \\[3pt]
+\textbf{Precondition}   & The ``Receptionist'' user must be selected, the
+                          SNS user must be registered, and must have a
+                          scheduled appointment for the current day. \\[3pt]
+\textbf{Post-condition} & The SNS user is logically assigned to the
+                          waiting room. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Register SNS User Arrival'' \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User inserts the SNS user's number \newline
+  $\rightarrow$ System checks if the SNS user has a scheduled
+                appointment for today \newline
+  $\rightarrow$ System checks that no duplicate arrival exists for the
+                same user on the same day \newline
+  $\rightarrow$ The SNS user is added to the waiting room \\[3pt]
+\textbf{Alternative path} &
+  -- SNS user has no appointment scheduled for today \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \newline
+  -- SNS user arrival already registered for today \newline
+  \quad $\rightarrow$ User receives a ``Duplicate Arrival'' error message
+  \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 3 -- Register SNS User Arrival}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p2_uc3}
+  \caption{SSD: Receptionist's UC 3}
+  \label{fig:ssd-p2-3}
+\end{figure}
+
+% ====================================================================
+\subsection{Actor: Nurse}
+% ====================================================================
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\textwidth]{imagens/uc_profile3}
+  \caption{Nurse's Use Case Diagram}
+  \label{fig:uc-p3}
+\end{figure}
+
+% ------------------------------------------------------------------ US40
+\subsubsection*{Use Case: Consult Waiting Room -- US40 (Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Consult Waiting Room (US40)}
+\label{tab:p3-us40}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Nurse \\
+\hline
+\textbf{Use case name}  & Consult Waiting Room \\[3pt]
+\textbf{Description}    & The nurse consults the list of SNS users
+                          currently in the waiting room, ordered on a
+                          first-come, first-served basis. \\[3pt]
+\textbf{Precondition}   & The ``Nurse'' user must be selected and at least
+                          one SNS user must be registered in the waiting
+                          room. \\[3pt]
+\textbf{Post-condition} & None \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Consult Waiting Room'' \newline
+  $\rightarrow$ System checks if any SNS users are in the waiting room
+  \newline
+  $\rightarrow$ System displays a list of SNS users in the waiting room
+                in order of arrival \\[3pt]
+\textbf{Alternative path} &
+  -- No SNS users are in the waiting room \newline
+  \quad $\rightarrow$ System sends a ``Waiting Room Empty'' message
+  \newline
+  \quad $\rightarrow$ Use case resumes at step~1 \\[3pt]
+\textbf{Exceptions}     & None \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 1 -- Consult Waiting Room}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p3_uc1}
+  \caption{SSD: Nurse's UC 1}
+  \label{fig:ssd-p3-1}
+\end{figure}
+
+% ------------------------------------------------------------------ US41
+\subsubsection*{Use Case: Record Vaccine Administration -- US41
+(Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Record Vaccine Administration (US41)}
+\label{tab:p3-us41}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & Nurse \\
+\hline
+\textbf{Use case name}  & Record Vaccine Administration \\[3pt]
+\textbf{Description}    & The nurse logs the administration of a vaccine
+                          to an SNS user, removes the specific dose from
+                          the inventory, and assigns the user to the
+                          recovery room. \\[3pt]
+\textbf{Precondition}   & The ``Nurse'' user must be selected, at least
+                          one SNS user must be in the waiting room, and
+                          at least one matching vaccine dose must be
+                          available in inventory. \\[3pt]
+\textbf{Post-condition} & A VaccinationProcess is recorded, the
+                          administered dose is removed from available
+                          stock, and the SNS user is assigned to the
+                          recovery room. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Record Vaccine Administration'' \newline
+  $\rightarrow$ System displays the waiting room list \newline
+  $\rightarrow$ Nurse selects the SNS user to vaccinate \newline
+  $\rightarrow$ System displays the available vaccine doses matching
+                the user's appointment \newline
+  $\rightarrow$ Nurse selects the specific dose by lot number \newline
+  $\rightarrow$ System removes the selected dose from inventory \newline
+  $\rightarrow$ A VaccinationProcess record is created and the SNS
+                user is moved to the recovery room \\[3pt]
+\textbf{Alternative path} &
+  -- No matching vaccine doses are available in inventory \newline
+  \quad $\rightarrow$ System sends a ``No Stock Available'' message
+  \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 2 -- Record Vaccine Administration}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p3_uc2}
+  \caption{SSD: Nurse's UC 2}
+  \label{fig:ssd-p3-2}
+\end{figure}
+
+% ====================================================================
+\subsection{Actor: SNS User}
+% ====================================================================
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.60\textwidth]{imagens/uc_profile4}
+  \caption{SNS User's Use Case Diagram}
+  \label{fig:uc-p4}
+\end{figure}
+
+% ------------------------------------------------------------------ US30
+\subsubsection*{Use Case: Self-Schedule Administration -- US30
+(Specification)}
+
+\begin{table}[H]
+\caption{Use Case: Self-Schedule Administration (US30)}
+\label{tab:p4-us30}
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.6cm}
+                    >{\raggedright\arraybackslash}p{9.0cm}@{}}
+\hline
+\textbf{Actor}          & SNS User \\
+\hline
+\textbf{Use case name}  & Self-Schedule Administration \\[3pt]
+\textbf{Description}    & An SNS user uses the application directly to
+                          schedule a vaccine administration for a specific
+                          date. \\[3pt]
+\textbf{Precondition}   & The ``SNS User'' profile must be selected and
+                          the user must be registered in the system. \\[3pt]
+\textbf{Post-condition} & A new Appointment is saved and linked to the
+                          SNS user and the selected vaccine type. \\[3pt]
+\textbf{Main flow}      &
+  $\rightarrow$ System displays an option menu \newline
+  $\rightarrow$ User selects ``Schedule Administration'' \newline
+  $\rightarrow$ System displays an input space \newline
+  $\rightarrow$ User inserts their SNS user number \newline
+  $\rightarrow$ System checks if the SNS user is registered \newline
+  $\rightarrow$ System displays the available vaccine types \newline
+  $\rightarrow$ User selects a vaccine type and a desired date \newline
+  $\rightarrow$ System checks if the date is valid and the center has
+                capacity \newline
+  $\rightarrow$ A new Appointment is created and confirmed to the user
+  \\[3pt]
+\textbf{Alternative path} &
+  -- SNS user number is not registered \newline
+  \quad $\rightarrow$ User receives an error message \newline
+  \quad $\rightarrow$ Use case resumes at step~3 \newline
+  -- Selected date has no available capacity \newline
+  \quad $\rightarrow$ System sends a ``No Availability'' message \newline
+  \quad $\rightarrow$ Use case resumes at step~6 \\[3pt]
+\textbf{Exceptions}     &
+  If the user, at any point, wishes to cancel, the user can type
+  ``cancel operation'' and the use case resumes at step~1 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection*{SSD: UC 1 -- Self-Schedule Administration}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{imagens/ssd_p4_uc1}
+  \caption{SSD: SNS User's UC 1}
+  \label{fig:ssd-p4-1}
+\end{figure}
+
+% ====================================================================
+\end{document}
