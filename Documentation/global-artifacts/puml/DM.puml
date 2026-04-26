@@ -1,4 +1,4 @@
-@startuml DM_Simplified_With_Reaction
+@startuml DM_MedManager_Final_Refined
 title Domain Model - MedManager
 skinparam classAttributeIconSize 0
 hide circle
@@ -6,7 +6,6 @@ hide methods
 top to bottom direction
 
 class Employee {
-    - id
     - name
     - address
     - phone
@@ -14,35 +13,25 @@ class Employee {
     - citizenCardNumber
 }
 
-class CenterAdministrator extends Employee {
-}
-
-class Nurse extends Employee {
-}
-
-class Receptionist extends Employee {
-}
+class CenterAdministrator extends Employee
+class Nurse extends Employee
+class Receptionist extends Employee
 
 class HealthcareCenter {
     - name
     - address
     - phone
     - email
-    - website
     - openingHours
     - closingHours
     - vaccinesPerHourCapacity
 }
 
-class WaitingRoom {
-}
-
-class RecoveryRoom {
-}
+class WaitingRoom
+class RecoveryRoom
 
 class SNSUser {
     - snsNumber
-    - citizenCardNumber
     - name
     - birthdate
 }
@@ -52,56 +41,54 @@ class Appointment {
     - status
 }
 
+class Arrival {
+    - arrivalTime
+}
+
 class AdverseReaction {
-    - dateTime
     - description
 }
 
 class VaccinationProcess {
     - dateTime
-    - lotNumber
 }
 
 class Vaccine {
-    - commercialName
+    - name
     - brand
-    - technology
+    - lotNumber
     - expirationDate
+    - quantity
 }
 
 class VaccineType {
     - code
     - disease
-    - description
+    - technology
+    - recoveryPeriod
 }
 
 ' --- RELATIONS ---
 
-HealthcareCenter "1" *-- "1" WaitingRoom : has >
-HealthcareCenter "1" *-- "1" RecoveryRoom : has >
-HealthcareCenter "1" -down-- "0..*" Employee : employs >
-HealthcareCenter "1" -right-- "0..*" VaccineType : provides >
-HealthcareCenter "1" -down-- "0..*" Vaccine : stores (inventory) >
+HealthcareCenter "1" -- "1" WaitingRoom : has >
+HealthcareCenter "1" -- "1" RecoveryRoom : has >
+HealthcareCenter "1" -- "0..*" Employee : employs >
+HealthcareCenter "1" o-- "0..*" Vaccine : manages stock of >
 
+CenterAdministrator "1" -- "0..*" VaccineType : manages catalog >
 
-WaitingRoom "1" o-- "0..*" SNSUser : contains >
-RecoveryRoom "1" o-- "0..*" SNSUser : contains >
+Receptionist "1" -- "0..*" Arrival : registers >
+Arrival "0..*" -- "1" WaitingRoom : enters >
+Arrival "1" -- "1" SNSUser : of >
+Arrival "1" -- "1" Appointment : for >
 
+Nurse "1" -- "0..*" VaccinationProcess : executes >
+Appointment "1" -- "1..*" VaccinationProcess : results in >
+VaccinationProcess "1" -- "1" Vaccine : uses dose from >
 
-Receptionist "1" -down-- "0..*" SNSUser: registers >
-Receptionist "1" -down-- "0..*" Appointment : confirms >
+VaccinationProcess "1" -- "0..1" AdverseReaction : triggers >
+AdverseReaction "0..*" -- "1" RecoveryRoom : monitored in >
 
-
-SNSUser "1" -down-- "0..*" Appointment : schedules >
-Appointment "0..*" -right-- "1" VaccineType : for >
-
-
-Appointment "1" -down-- "0..1" VaccinationProcess : results in >
-VaccinationProcess "0..*" -left-- "1" Nurse : executed by >
-VaccinationProcess "0..1" -right-- "1" Vaccine : uses (1 dose) >
-VaccinationProcess "1" -down-- "0..1" AdverseReaction : registers >
-
-
-Vaccine "0..*" -up-- "1" VaccineType : of type >
+Vaccine "0..*" -- "1" VaccineType : is of >
 
 @enduml

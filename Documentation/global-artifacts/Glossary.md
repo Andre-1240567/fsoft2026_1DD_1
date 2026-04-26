@@ -4,16 +4,17 @@
 
 | **_TEA_ (EN)** | **_TEA_ (PT)** | **_Description_ (EN)** |
 | :--- | :--- | :--- |
-| **Adverse Reaction** | **Reação Adversa** | Clinical event or side effect recorded during the recovery period, including a description and the exact time of occurrence. |
-| **Appointment** | **Agendamento** | A scheduled slot (date and time) for an SNS User to receive a specific vaccine type. It can be in "scheduled" or "confirmed" status. |
-| **Center Administrator** | **Administrador do Centro** | Employee responsible for managing the center's resources, including vaccine types, physical stock, and employee records. |
-| **Employee** | **Funcionário** | Any worker at the center, identified by ID, Name, Address, Phone, Email, and Citizen Card Number. |
-| **Healthcare Center** | **Centro de Saúde** | The facility where vaccinations occur. It manages employees, inventory, and its own operating capacity. |
-| **Nurse** | **Enfermeiro** | Healthcare professional responsible for the clinical act of vaccination and monitoring users in the recovery room. |
-| **Receptionist** | **Rececionista** | Employee who manages user registration and confirms appointments upon the user's arrival. |
-| **Recovery Room** | **Sala de Recuperação** | A monitored area where users must remain for a specific period after vaccination to check for adverse reactions. |
-| **SNS User** | **Utente do SNS** | A citizen identified by a unique SNS number, CC number, and birthdate, eligible for vaccination. |
-| **Vaccination Process** | **Processo de Vacinação** | The formal record of a vaccine dose administration, linking a nurse, a user, and recording the specific lot number used. |
-| **Vaccine** | **Vacina** | A physical unit in the inventory, characterized by a commercial name, brand, technology, and expiration date. |
-| **Vaccine Type** | **Tipo de Vacina** | A category defined by a code and the disease it prevents (e.g., COVID-19). It serves as a template for physical vaccines. |
-| **Waiting Room** | **Sala de Espera** | A logical queue (First-Come, First-Served) where users stay after check-in until a nurse is available. |
+| **Adverse Reaction** | **Reação Adversa** | Clinical event or side effect recorded after vaccination, typically monitored in the recovery room during the designated period. |
+| **Appointment** | **Agendamento** | A scheduled slot (date and time) for an SNS User to receive a specific vaccine type. It serves as the prerequisite for a vaccination process. |
+| **Arrival** | **Chegada** | The formal record of the user's physical presence at the center. It links an Appointment to the Waiting Room, triggering the service flow. |
+| **Center Administrator** | **Administrador do Centro** | Employee responsible for managing center resources, including the vaccine catalog (types), physical stock, and employee records. |
+| **Employee** | **Funcionário** | Any worker at the center (Administrator, Nurse, or Receptionist), identified by name, address, phone, email, and citizen card number. |
+| **Healthcare Center** | **Centro de Saúde** | The facility where vaccinations occur, defined by its operating hours and its hourly vaccination capacity. |
+| **Nurse** | **Enfermeiro** | Healthcare professional responsible for the clinical act of vaccination and for consulting the Waiting Room to call the next user. |
+| **Receptionist** | **Rececionista** | Employee responsible for registering the arrival of users, confirming appointments, and managing initial user data. |
+| **Recovery Room** | **Sala de Recuperação** | A monitored area where users must remain after vaccination for a period defined by the specific Vaccine Type to check for reactions. |
+| **SNS User** | **Utente do SNS** | A citizen eligible for vaccination, identified by a unique SNS number, citizen card number, and birthdate. |
+| **Vaccination Process** | **Processo de Vacinação** | The clinical act of administering a vaccine dose, linking a nurse, a specific vaccine lot, and an appointment. |
+| **Vaccine** | **Vacina** | A physical unit in the center's inventory, characterized by a commercial name, brand, lot number, expiration date, and available quantity. |
+| **Vaccine Type** | **Tipo de Vacina** | A category (e.g., COVID-19) that defines the technology used, the disease it prevents, and the required recovery period for users. |
+| **Waiting Room** | **Sala de Espera** | A logical queue that manages arrivals in a First-Come, First-Served (FCFS) order until a nurse is available to perform the vaccination. |
