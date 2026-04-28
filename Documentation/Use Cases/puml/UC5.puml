@@ -1,21 +1,21 @@
-@startuml SSD_ListEmployees
-title SSD: UC5 - List Employees by Role
+@startuml SSD_ListVaccines
+title SSD: UC5 - List of Vaccines Stock
+
 
 actor "Center Administrator" as Admin
 participant ":System" as System
 
 autonumber
-
 activate Admin
-Admin -> System: requests a list of employees
+Admin -> System: requests a list of all vaccines in the system
 activate System
-System --> Admin: shows the available roles (Nurse, Receptionist) and asks to select one
-deactivate System
 
-Admin -> System: selects the intended role
-activate System
-System --> Admin: shows the list of employees assigned to the selected role
+alt invalid
+    System --> Admin: displays "Stock empty" message
+else valid
+     System --> Admin: displays vaccines grouped by type and sorted by brand
+end
+
 deactivate System
 deactivate Admin
-
 @enduml

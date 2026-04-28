@@ -1,5 +1,5 @@
-@startuml SSD_RegisterEmployee
-title SSD: UC4 - Register Employee
+@startuml SSD_ListEmployees
+title SSD: UC5 - List Employees by Role
 
 actor "Center Administrator" as Admin
 participant ":System" as System
@@ -7,25 +7,20 @@ participant ":System" as System
 autonumber
 
 activate Admin
-Admin -> System: starts the registration of a new employee
+Admin -> System: requests a list of employees
 activate System
-System --> Admin: shows the available roles (Nurse, Receptionist) and asks to select one
+System --> Admin: prompts to select a role (Nurse, Receptionist, Center Administrator)
 deactivate System
 
-Admin -> System: selects the intended role
+Admin -> System: selects the desired role
 activate System
-System --> Admin: requests the remaining employee's information (id, name, address, phone, email, citizen card number)
-deactivate System
 
-Admin -> System: inputs the requested data
-activate System
-System --> Admin: shows the inputted data and requests confirmation
-deactivate System
+alt invalid
+    System --> Admin: informs that no employees are registered with that role
+else valid
+    System --> Admin: displays list of employees
+end
 
-Admin -> System: confirms the data
-activate System
-System --> Admin: validates data, registers the employee and informs success
 deactivate System
 deactivate Admin
-
 @enduml

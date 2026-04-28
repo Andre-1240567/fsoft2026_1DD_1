@@ -5,32 +5,30 @@ actor "Center Administrator" as Admin
 participant ":System" as System
 
 autonumber
-
-activate Admin
-Admin -> System: starts the registration of a physical vaccine dose
+Admin -> System: starts vaccine registration
 activate System
-System --> Admin: shows a list of existing vaccine types and asks to select one
+
+System --> Admin: shows list of VaccineTypes
 deactivate System
 
-Admin -> System: selects the corresponding vaccine type
+Admin -> System: selects vaccine type
 activate System
-System --> Admin: shows a predefined list of vaccine technologies and asks to select one
+
+System --> Admin: requests data (name, brand, lotNumber, expirationDate, quantity)
 deactivate System
 
-Admin -> System: selects the technology
+Admin -> System: inputs data
 activate System
-System --> Admin: requests the remaining vaccine details (commercial name, brand, expiration date)
-deactivate System
 
-Admin -> System: inputs the requested data
-activate System
-System --> Admin: shows the inputted data and requests confirmation
-deactivate System
+System --> System: validate required fields
 
-Admin -> System: confirms the data
-activate System
-System --> Admin: registers the physical vaccine in the inventory and informs operation success
-deactivate System
-deactivate Admin
+alt invalid
+    System --> Admin: informs validation error
+else valid
+    System --> System: add vaccine to HealthcareCenter stock
 
+    System --> Admin: confirms successful registration
+end
+
+deactivate System
 @enduml
