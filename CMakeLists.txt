@@ -24,4 +24,12 @@ add_executable(fsoft2026_1DD_1
         src/view/MainMenu.h
         src/view/Utils.cpp
         src/view/Utils.h
+        src/model/SNSUser.cpp
+        src/model/SNSUser.h
+        src/model/CenterAdministrator.cpp
+        src/model/CenterAdministrator.h
+        src/model/Receptionist.cpp
+        src/model/Receptionist.h
+        src/model/Nurse.cpp
+        src/model/Nurse.h
 )
