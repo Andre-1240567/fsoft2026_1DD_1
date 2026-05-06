@@ -6,9 +6,9 @@
 #define FSOFT2026_1DD_1_UTILS_H
 
 
-class Utils
-{
-};
+#include <string>
 
+void clearScreen();
+int readInt(const std::string& prompt, int min, int max);
 
 #endif //FSOFT2026_1DD_1_UTILS_H
