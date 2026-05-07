@@ -33,7 +33,11 @@ class RecoveryRoom
 class SNSUser {
     - snsNumber
     - name
+    - address
     - birthdate
+    - phone
+    - sex
+    - citizenCardNumber
 }
 
 class Appointment {
@@ -69,25 +73,34 @@ class VaccineType {
 }
 
 ' --- RELATIONS ---
-
 HealthcareCenter "1" -- "1" WaitingRoom : has >
 HealthcareCenter "1" -- "1" RecoveryRoom : has >
 HealthcareCenter "1" -- "0..*" Employee : employs >
 HealthcareCenter "1" o-- "0..*" Vaccine : manages stock of >
+HealthcareCenter "1" -- "0..*" VaccineType : maintains catalog of >
+HealthcareCenter "1" -- "0..*" SNSUser : keeps registry of >
+HealthcareCenter "1" -- "0..*" Appointment : manages schedule of >
 
-CenterAdministrator "1" -- "0..*" VaccineType : manages catalog >
+CenterAdministrator "1" -- "0..*" VaccineType : manages >
+
+Receptionist "1" -- "0..*" SNSUser : registers >
+Receptionist "1" -- "0..*" Appointment : schedules >
+SNSUser "1" -- "0..*" Appointment : schedules >
+
+Appointment "0..*" -- "1" SNSUser : is for >
+Appointment "0..*" -- "1" VaccineType : refers to >
 
 Receptionist "1" -- "0..*" Arrival : registers >
-Arrival "0..*" -- "1" WaitingRoom : enters >
 Arrival "1" -- "1" SNSUser : of >
 Arrival "1" -- "1" Appointment : for >
+Arrival "0..*" -- "1" WaitingRoom : queues in >
 
 Nurse "1" -- "0..*" VaccinationProcess : executes >
-Appointment "1" -- "1..*" VaccinationProcess : results in >
+Appointment "1" -- "1" VaccinationProcess : results in >
 VaccinationProcess "1" -- "1" Vaccine : uses dose from >
 
 VaccinationProcess "1" -- "0..1" AdverseReaction : triggers >
-AdverseReaction "0..*" -- "1" RecoveryRoom : monitored in >
+VaccinationProcess "0..*" -- "1" RecoveryRoom : routes user to >
 
 Vaccine "0..*" -- "1" VaccineType : is of >
 
