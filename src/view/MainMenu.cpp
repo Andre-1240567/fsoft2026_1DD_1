@@ -6,6 +6,8 @@
 #include "Utils.h"
 #include <iostream>
 #include <string>
+
+
 // ---- UC1 ----
 void uc1_createVaccineType() {
     clearScreen();
@@ -30,9 +32,8 @@ void uc1_createVaccineType() {
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
-    std::cout << "\nPressione ENTER para continuar...";
-    std::cin.get();
-}
+    pause();
+    }
 
 // ---- UC2 ----
 void uc2_registerPhysicalVaccine() {
@@ -68,8 +69,7 @@ void uc2_registerPhysicalVaccine() {
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
-    std::cout << "\nPressione ENTER para continuar...";
-    std::cin.get();
+    pause();
 }
 
 // ---- UC3 ----
@@ -85,8 +85,7 @@ void uc3_listVaccineStock() {
     std::cout << "Tipo: Gripe\n";
     std::cout << "  Sanofi | Lote: SN-007 | Validade: 30/04/2026\n";
 
-    std::cout << "\nPressione ENTER para continuar...";
-    std::cin.get();
+    pause();
 }
 
 // ---- UC4 ----
@@ -123,8 +122,7 @@ void uc4_registerEmployee() {
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
-    std::cout << "\nPressione ENTER para continuar...";
-    std::cin.get();
+    pause();
 }
 
 // ---- UC5 ----
@@ -142,8 +140,7 @@ void uc5_listEmployeesByRole() {
     std::cout << "  ID: E001 | Nome: Maria Silva\n";
     std::cout << "  ID: E002 | Nome: Joao Santos\n";
 
-    std::cout << "\nPressione ENTER para continuar...";
-    std::cin.get();
+    pause();
 }
 
 // ---- Menu Administrador ----
@@ -185,14 +182,13 @@ void mainMenu() {
         std::cout << "  1. Administrador do Centro\n";
         std::cout << "  2. Rececionista       [em breve]\n";
         std::cout << "  3. Enfermeiro         [em breve]\n";
-        std::cout << "  4. Utente SNS         [em breve]\n";
         std::cout << "  0. Sair\n";
         std::cout << "========================================\n";
 
         option = readInt("Opcao: ", 0, 4);
         switch (option) {
             case 1: menuCenterAdministrator(); break;
-            case 2: case 3: case 4:
+            case 2: case 3:
                 std::cout << "\n[INFO] Ainda nao implementado.\n";
                 std::cout << "Pressione ENTER...";
                 std::cin.get();
