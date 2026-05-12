@@ -14,6 +14,7 @@ add_executable(fsoft2026_1DD_1
         src/model/Employee.cpp
         src/model/Vaccine.cpp
         src/model/Vaccine.h
+        src/model/VaccineType.cpp
         src/model/HealthcareCenter.cpp
         src/model/HealthcareCenter.h
         src/controller/EmployeeController.cpp

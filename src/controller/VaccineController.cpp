@@ -4,6 +4,7 @@
 
 #include "VaccineController.h"
 #include "../model/VaccineType.h"
+#include "../model/HealthcareCenter.h"
 
 VaccineController::VaccineController(HealthcareCenter* hc)
 {

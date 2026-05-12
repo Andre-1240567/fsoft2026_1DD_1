@@ -23,4 +23,4 @@ public:
     std::string getCode() const;
 };
 
-#endif //FSOFT2026_1DD_1_VACCINETYPE_H
+#endif // FSOFT2026_1DD_1_VACCINETYPE_H
