@@ -1,6 +1,5 @@
-@startuml SSD_ListVaccines
-title SSD: UC3 - List of Vaccines Stock
-
+@startuml SSD_RegisterEmployee
+title SSD: UC3 - Register Employee
 
 actor "Center Administrator" as Admin
 participant ":System" as System
@@ -8,9 +7,23 @@ participant ":System" as System
 autonumber
 
 activate Admin
-Admin -> System: requests a list of the physical vaccine stock
+Admin -> System: starts the registration of a new employee
 activate System
-System --> Admin: shows the inventory (grouped by type and listed alphabetically by brand)
+System --> Admin: asks to select a role (Center Administrator, Nurse, Receptionist)
+deactivate System
+
+Admin -> System: selects the intended role
+activate System
+System --> Admin: requests mandatory data (Name, Phone, E-mail, Citizen Card Number)
+deactivate System
+
+Admin -> System: inputs the requested data
+activate System
+    System --> Admin: informs the error
+alt invalid
+   System --> Admin: registers employee and informs success
+end
+
 deactivate System
 deactivate Admin
 
