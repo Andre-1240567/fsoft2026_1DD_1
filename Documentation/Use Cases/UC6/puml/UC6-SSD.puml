@@ -1,0 +1,26 @@
+@startuml SSD_RegisterSNSUser
+title SSD: UC6 - Register an SNS User
+
+actor "Receptionist" as Rec
+participant ":System" as System
+
+autonumber
+activate Rec
+
+Rec -> System: starts the registration of a new SNS user
+activate System
+System --> Rec: requests data (Name, Address, Phone Number, SNS User Number, CC Number, Birth Date, Sex [Optional])
+deactivate System
+
+Rec -> System: inputs the requested data
+activate System
+
+alt invalid data or duplicate Phone/SNS Number
+    System --> Rec: informs validation error (e.g., duplicate SNS number or invalid PT format)
+else valid data
+    System --> Rec: confirms successful registration of the SNS user
+end
+
+deactivate System
+deactivate Rec
+@enduml

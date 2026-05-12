@@ -1,0 +1,26 @@
+@startuml SSD_RegisterArrival
+title SSD: UC9 - Register Arrival of an SNS User
+
+actor "Receptionist" as Rec
+participant ":System" as System
+
+autonumber
+activate Rec
+
+Rec -> System: starts registering the arrival of an SNS user
+activate System
+System --> Rec: requests SNS User Number
+deactivate System
+
+Rec -> System: inputs SNS User Number
+activate System
+
+alt no appointment for today or user already arrived
+    System --> Rec: informs error (e.g., no appointment scheduled for today or duplicate arrival)
+else valid appointment for today and no prior arrival
+    System --> Rec: confirms successful registration and informs that the user was added to the Waiting Room
+end
+
+deactivate System
+deactivate Rec
+@enduml

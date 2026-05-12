@@ -9,10 +9,10 @@ autonumber
 Admin -> System: starts specifying a new vaccine type
 activate System
 
-System --> Admin: requests data (code, disease, technology, recoveryPeriod)
+System --> Admin: requests data (code, disease, recoveryPeriod) and presents list of technologies
 deactivate System
 
-Admin -> System: inputs code, disease, technology, recoveryPeriod
+Admin -> System: inputs data (code, disease, recoveryPeriod) and selects technology
 activate System
 
 System --> System: validate code uniqueness

@@ -1,5 +1,5 @@
 @startuml SSD_ListEmployees
-title SSD: UC5 - List Employees by Role
+title SSD: UC4 - List Employees by Role
 
 actor "Center Administrator" as Admin
 participant ":System" as System
@@ -15,10 +15,10 @@ deactivate System
 Admin -> System: selects the desired role
 activate System
 
-alt invalid
+alt no employees found for role
     System --> Admin: informs that no employees are registered with that role
-else valid
-    System --> Admin: displays list of employees
+else employees found
+    System --> Admin: displays list of employees (with contact/ID details)
 end
 
 deactivate System

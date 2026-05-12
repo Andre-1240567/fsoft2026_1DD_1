@@ -1,0 +1,46 @@
+@startuml SSD_ScheduleVaccine_SNSUser
+title SSD: UC7 - Schedule a Vaccine Administration (SNS User)
+
+actor "SNS User" as User
+participant ":System" as System
+
+autonumber
+activate User
+
+User -> System: starts scheduling a vaccine administration
+activate System
+System --> User: requests SNS User Number
+deactivate System
+
+User -> System: inputs SNS User Number
+activate System
+
+alt user not registered
+    System --> User: informs user not found error
+else user registered
+    System --> User: shows list of available Vaccine Types
+    deactivate System
+
+    User -> System: selects the desired Vaccine Type
+    activate System
+    System --> User: requests Date and Time for the appointment
+    deactivate System
+
+    User -> System: inputs Date and Time
+    activate System
+
+    alt date/time is in the past
+        System --> User: informs invalid date/time error
+    else valid date/time
+        System --> User: displays appointment summary (Center, Date, Time, Vaccine Type) and requests confirmation
+        deactivate System
+
+        User -> System: confirms the appointment
+        activate System
+        System --> User: confirms successful scheduling
+    end
+end
+
+deactivate System
+deactivate User
+@enduml

@@ -19,9 +19,11 @@ deactivate System
 
 Admin -> System: inputs the requested data
 activate System
-    System --> Admin: informs the error
-alt invalid
-   System --> Admin: registers employee and informs success
+
+alt invalid data or duplicate
+    System --> Admin: informs validation error (e.g., duplicate email/phone)
+else valid data
+    System --> Admin: confirms successful registration
 end
 
 deactivate System
