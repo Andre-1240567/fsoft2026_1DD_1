@@ -35,6 +35,7 @@ public:
 
     ~HealthcareCenter();
 
+    bool addVaccineType(VaccineType* vt); // Modified to accept pointer
     void addEmployee(Employee* emp);
     void registerSNSUser(SNSUser* user);
     void addVaccineToInventory(Vaccine* vaccine);
