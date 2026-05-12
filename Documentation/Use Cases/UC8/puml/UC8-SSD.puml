@@ -1,0 +1,46 @@
+@startuml SSD_ScheduleVaccine_Receptionist
+title SSD: UC8 - Schedule a Vaccine Administration (Receptionist)
+
+actor "Receptionist" as Rec
+participant ":System" as System
+
+autonumber
+activate Rec
+
+Rec -> System: starts scheduling a vaccine administration for an SNS User
+activate System
+System --> Rec: requests SNS User Number
+deactivate System
+
+Rec -> System: inputs SNS User Number
+activate System
+
+alt user not registered
+    System --> Rec: informs user not found error
+else user registered
+    System --> Rec: shows list of available Vaccine Types
+    deactivate System
+
+    Rec -> System: selects the desired Vaccine Type
+    activate System
+    System --> Rec: requests Date and Time for the appointment
+    deactivate System
+
+    Rec -> System: inputs Date and Time
+    activate System
+
+    alt invalid date/time or pending appointment exists
+        System --> Rec: informs scheduling error (e.g., past date or conflict)
+    else valid schedule and no conflicts
+        System --> Rec: displays appointment summary and requests confirmation
+        deactivate System
+
+        Rec -> System: confirms the appointment
+        activate System
+        System --> Rec: confirms successful scheduling
+    end
+end
+
+deactivate System
+deactivate Rec
+@enduml

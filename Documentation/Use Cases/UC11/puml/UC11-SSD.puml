@@ -1,0 +1,36 @@
+@startuml SSD_RecordVaccineAdministration
+title SSD: UC11 - Record Vaccine Administration
+
+actor "Nurse" as Nurse
+participant ":System" as System
+
+autonumber
+activate Nurse
+
+Nurse -> System: starts recording a vaccine administration
+activate System
+System --> Nurse: requests SNS User Number
+deactivate System
+
+Nurse -> System: inputs SNS User Number
+activate System
+
+alt user not in waiting room
+    System --> Nurse: informs error (user is not in the waiting room)
+else user in waiting room
+    System --> Nurse: shows available Vaccines and Lot Numbers
+    deactivate System
+
+    Nurse -> System: selects the administered Vaccine and Lot Number
+    activate System
+
+    alt invalid selection or lot out of stock
+        System --> Nurse: informs error (e.g., out of stock)
+    else valid selection and stock available
+        System --> Nurse: confirms administration (records timestamp, updates status to ADMINISTERED)\nand informs that user was moved to the Recovery Room
+    end
+end
+
+deactivate System
+deactivate Nurse
+@enduml

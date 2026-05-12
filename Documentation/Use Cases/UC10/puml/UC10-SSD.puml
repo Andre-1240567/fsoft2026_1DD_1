@@ -1,0 +1,21 @@
+@startuml SSD_ConsultWaitingRoom
+title SSD: UC10 - Consult Waiting Room
+
+actor "Nurse" as Nurse
+participant ":System" as System
+
+autonumber
+activate Nurse
+
+Nurse -> System: requests the list of users in the waiting room
+activate System
+
+alt waiting room is empty
+    System --> Nurse: displays "Waiting room is currently empty" message
+else waiting room has users
+    System --> Nurse: displays the list of users in FIFO order (SNS Number and Name)
+end
+
+deactivate System
+deactivate Nurse
+@enduml
