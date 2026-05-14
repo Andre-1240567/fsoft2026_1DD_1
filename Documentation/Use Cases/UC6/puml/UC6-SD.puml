@@ -1,0 +1,52 @@
+@startuml SD_RegisterSNSUser
+title SD: Issue 6 - Register an SNS User
+
+actor "Receptionist" as Rec
+participant ": MainMenu" as UI
+participant ": SNSUserController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "u: SNSUser" as User
+
+autonumber
+
+activate Rec
+Rec -> UI: starts the registration of a new SNS user
+activate UI
+
+UI --> Rec: requests data (Name, Address, Phone, SNS Number, CC, Birth Date, Sex [Optional])
+deactivate UI
+
+Rec -> UI: inputs the requested data
+activate UI
+
+UI -> CTRL: registerSNSUser(snsNumber, name, address, birthDate, phone, cc, sex)
+activate CTRL
+
+CTRL -> HC: isDuplicateUser(snsNumber, phone)
+activate HC
+HC --> CTRL: returns false (no duplicates)
+deactivate HC
+
+CTRL -> CTRL: validatePTFormats(phone, cc)
+
+alt invalid format or duplicate found
+    CTRL --> UI: returns validation error
+    UI --> Rec: informs validation error (e.g., duplicate SNS or invalid PT format)
+else valid data
+
+    CTRL -> User ** : create(snsNumber, name, address, birthDate, phone, cc, sex)
+    CTRL -> HC: registerSNSUser(u)
+    activate HC
+    HC -> HC: snsUsersRegistry.push_back(u)
+    HC --> CTRL: returns true
+    deactivate HC
+
+    CTRL --> UI: returns true
+
+    UI --> Rec: confirms successful registration
+end
+
+deactivate CTRL
+deactivate UI
+deactivate Rec
+@enduml

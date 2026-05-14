@@ -1,0 +1,103 @@
+@startuml SD_ScheduleVaccine_Receptionist
+title SD: Issue 8 - Schedule a Vaccine Administration (Receptionist)
+skinparam maxMessageSize 150
+
+actor "Receptionist" as Rec
+participant ": MainMenu" as UI
+participant ": AppointmentController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "appt: Appointment" as Appt
+
+autonumber
+
+activate Rec
+Rec -> UI: starts scheduling a vaccine administration for an SNS User
+activate UI
+
+UI --> Rec: requests SNS User Number
+deactivate UI
+
+Rec -> UI: inputs SNS User Number
+activate UI
+
+
+UI -> CTRL: checkUserExists(snsNumber)
+activate CTRL
+CTRL -> HC: getSNSUser(snsNumber)
+activate HC
+HC --> CTRL: returns SNSUser* (or null)
+deactivate HC
+CTRL --> UI: returns boolean (true if exists)
+deactivate CTRL
+
+alt user not registered
+    UI --> Rec: informs user not found error
+else user registered
+
+    UI -> CTRL: getVaccineCatalog()
+    activate CTRL
+    CTRL -> HC: getVaccineCatalog()
+    activate HC
+    HC --> CTRL: returns vector<VaccineType*>
+    deactivate HC
+    CTRL --> UI: returns list of types
+    deactivate CTRL
+
+    UI --> Rec: shows list of available Vaccine Types
+    deactivate UI
+
+    Rec -> UI: selects Vaccine Type and inputs Date/Time
+    activate UI
+
+
+    UI -> CTRL: validateSchedule(snsNumber, typeIndex, date, time)
+    activate CTRL
+
+    CTRL -> HC: hasPendingAppointment(snsNumber, typeIndex)
+    activate HC
+    HC --> CTRL: returns false (no conflicts)
+    deactivate HC
+
+    CTRL --> UI: returns validation result
+    deactivate CTRL
+
+    alt invalid date/time or pending appointment exists
+        UI --> Rec: informs scheduling error (e.g., past date or conflict)
+    else valid schedule and no conflicts
+        UI --> Rec: displays appointment summary and requests confirmation
+        deactivate UI
+
+        Rec -> UI: confirms the appointment
+        activate UI
+
+        UI -> CTRL: createAppointment(snsNumber, typeIndex, date, time)
+        activate CTRL
+
+        CTRL -> HC: getSNSUser(snsNumber)
+        activate HC
+        HC --> CTRL: returns user
+        deactivate HC
+
+        CTRL -> HC: getVaccineType(typeIndex)
+        activate HC
+        HC --> CTRL: returns type
+        deactivate HC
+
+        CTRL -> Appt ** : create(date, time, user, type)
+
+        CTRL -> HC: addAppointment(appt)
+        activate HC
+        HC -> HC: masterSchedule.push_back(appt)
+        HC --> CTRL: returns true
+        deactivate HC
+
+        CTRL --> UI: returns true
+        deactivate CTRL
+
+        UI --> Rec: confirms successful scheduling
+    end
+end
+
+deactivate UI
+deactivate Rec
+@enduml

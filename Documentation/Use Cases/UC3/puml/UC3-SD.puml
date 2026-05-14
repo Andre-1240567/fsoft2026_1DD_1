@@ -1,0 +1,55 @@
+@startuml SD_RegisterEmployee
+title SD: UC3 - Register Employee
+skinparam maxMessageSize 150
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant ": EmployeeController" as CTRL
+participant ": HealthcareCenter" as HC
+
+autonumber
+
+activate Admin
+Admin -> UI: starts the registration of a new employee
+activate UI
+
+UI --> Admin: shows available roles (Nurse, Receptionist) and asks to select
+deactivate UI
+
+Admin -> UI: selects the intended role
+activate UI
+
+UI --> Admin: requests data (id, name, address, phone, email, cc)
+deactivate UI
+
+Admin -> UI: inputs the requested data
+activate UI
+
+UI -> CTRL: registerEmployee(role, id, name, address, phone, email, cc)
+activate CTRL
+
+CTRL -> HC: isDuplicate(phone, email, cc)
+activate HC
+HC --> CTRL: returns false (no duplicates)
+deactivate HC
+
+alt role == 1 (Nurse)
+    CTRL -> "emp: Nurse" ** : create(id, name, address, phone, email, cc)
+else role == 2 (Receptionist)
+    CTRL -> "emp: Receptionist" ** : create(id, name, address, phone, email, cc)
+end
+
+CTRL -> HC: addEmployee(emp)
+activate HC
+HC -> HC: employees.push_back(emp)
+HC --> CTRL: returns true
+deactivate HC
+
+CTRL --> UI: returns true
+deactivate CTRL
+
+UI --> Admin: confirms successful registration
+deactivate UI
+deactivate Admin
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml SD_ListVaccinesStock
+title SD: Issue 5 - List Vaccines Stock
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant ": VaccineController" as CTRL
+participant ": HealthcareCenter" as HC
+
+autonumber
+
+activate Admin
+Admin -> UI: requests a list of all vaccines
+activate UI
+
+UI -> CTRL: getVaccineStockGroupedAndSorted()
+activate CTRL
+
+CTRL -> HC: getInventory()
+activate HC
+HC --> CTRL: returns vector<Vaccine*>
+deactivate HC
+
+alt inventory is empty
+    CTRL --> UI: returns empty structure
+else inventory has items
+
+    CTRL -> CTRL: group by VaccineType (e.g., using std::map)
+    CTRL -> CTRL: sort each group alphabetically by Brand (std::sort)
+    CTRL --> UI: returns grouped and sorted structure
+end
+deactivate CTRL
+
+alt empty structure returned
+    UI --> Admin: displays "No inventory found" message
+else populated structure returned
+    UI --> Admin: displays vaccines grouped by type
+    note right of UI: Output includes:\n- Commercial Name\n- Brand\n- Lot Number\n- Expiration Date\n- Quantity
+end
+
+deactivate UI
+deactivate Admin
+@enduml

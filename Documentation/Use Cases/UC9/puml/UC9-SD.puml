@@ -1,0 +1,68 @@
+@startuml SD_RegisterArrival
+title SD: Issue 9 - Register Arrival of an SNS User
+skinparam maxMessageSize 150
+
+actor "Receptionist" as Rec
+participant ": MainMenu" as UI
+participant ": ArrivalController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "appt: Appointment" as Appt
+participant "arr: Arrival" as Arr
+
+autonumber
+
+activate Rec
+Rec -> UI: starts registering the arrival of an SNS user
+activate UI
+
+UI --> Rec: requests SNS User Number
+deactivate UI
+
+Rec -> UI: inputs SNS User Number
+activate UI
+
+UI -> CTRL: registerArrival(snsNumber)
+activate CTRL
+
+CTRL -> HC: getTodayAppointment(snsNumber)
+activate HC
+HC --> CTRL: returns Appointment* (or null)
+deactivate HC
+
+CTRL -> HC: isUserInWaitingRoom(snsNumber)
+activate HC
+HC --> CTRL: returns boolean
+deactivate HC
+
+alt no appointment for today OR user already in waiting room
+    CTRL --> UI: returns validation error
+    UI --> Rec: informs error (e.g., no appointment scheduled or duplicate arrival)
+else valid appointment and no prior arrival
+
+    CTRL -> HC: getSNSUser(snsNumber)
+    activate HC
+    HC --> CTRL: returns user
+    deactivate HC
+
+    CTRL -> Appt: setStatus("WAITING")
+    activate Appt
+    deactivate Appt
+
+    CTRL -> Arr ** : create(currentTime, user, appt)
+
+    CTRL -> HC: addArrivalAndQueueUser(arr, user)
+    activate HC
+    HC -> HC: arrivals.push_back(arr)
+    HC -> HC: waitingRoom.push_back(user)
+    HC --> CTRL: returns true
+    deactivate HC
+
+    CTRL --> UI: returns true
+    deactivate CTRL
+
+    UI --> Rec: confirms successful registration and assignment to Waiting Room
+end
+
+deactivate UI
+deactivate Rec
+@enduml

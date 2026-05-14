@@ -1,0 +1,51 @@
+@startuml SD_ListEmployeesByRole
+title SD: Issue 4 - List Employees by Role
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant ": EmployeeController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "e: Employee" as E
+
+autonumber
+
+activate Admin
+Admin -> UI: requests a list of employees
+activate UI
+
+UI --> Admin: prompts to select a role (Nurse, Receptionist, Admin)
+deactivate UI
+
+Admin -> UI: selects the desired role
+activate UI
+
+UI -> CTRL: getEmployeesByRole(role)
+activate CTRL
+
+CTRL -> HC: getEmployees()
+activate HC
+HC --> CTRL: returns vector<Employee*>
+deactivate HC
+
+loop for each employee in list
+    CTRL -> E: getRole() (or use dynamic_cast)
+
+    alt employee matches selected role
+        CTRL -> CTRL: add to temporary list
+    end
+end
+
+CTRL --> UI: returns filtered list
+deactivate CTRL
+
+
+alt list is empty
+    UI --> Admin: informs that no employees are registered with that role
+else list not empty
+    UI --> Admin: displays list (Name, Phone, E-mail, CC)
+end
+
+deactivate UI
+deactivate Admin
+
+@enduml
