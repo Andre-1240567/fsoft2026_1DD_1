@@ -1,0 +1,87 @@
+@startuml SD_RecordVaccineAdministration
+title SD: Issue 11 - Record Vaccine Administration
+skinparam maxMessageSize 150
+
+actor "Nurse" as Nurse
+participant ": MainMenu" as UI
+participant ": VaccinationController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "appt: Appointment" as Appt
+participant "v: Vaccine" as Vac
+participant "vp: VaccinationProcess" as VP
+
+autonumber
+
+activate Nurse
+Nurse -> UI: starts recording a vaccine administration
+activate UI
+
+UI --> Nurse: requests SNS User Number
+deactivate UI
+
+Nurse -> UI: inputs SNS User Number
+activate UI
+
+UI -> CTRL: checkUserInWaitingRoom(snsNumber)
+activate CTRL
+CTRL -> HC: isUserInWaitingRoom(snsNumber)
+activate HC
+HC --> CTRL: returns boolean
+deactivate HC
+CTRL --> UI: returns result
+deactivate CTRL
+
+alt user not in waiting room
+    UI --> Nurse: informs error (user is not in the waiting room)
+else user in waiting room
+
+    UI -> CTRL: getAvailableVaccines()
+    activate CTRL
+    CTRL -> HC: getInventory()
+    activate HC
+    HC --> CTRL: returns vector<Vaccine*>
+    deactivate HC
+    CTRL --> UI: returns list of vaccines/lots
+    deactivate CTRL
+
+    UI --> Nurse: shows available Vaccines and Lot Numbers
+    deactivate UI
+
+    Nurse -> UI: selects the administered Vaccine and Lot Number
+    activate UI
+
+    UI -> CTRL: recordAdministration(snsNumber, lotNumber)
+    activate CTRL
+
+    CTRL -> HC: getSNSUser(snsNumber)
+    CTRL -> HC: getVaccineByLot(lotNumber)
+    CTRL -> HC: getTodayAppointment(snsNumber)
+
+    CTRL -> Appt: setStatus("ADMINISTERED")
+    activate Appt
+    deactivate Appt
+
+    CTRL -> Vac: decreaseQuantity(1)
+    activate Vac
+    deactivate Vac
+
+    CTRL -> VP ** : create(currentTime, user, vaccine, nurse)
+
+    CTRL -> HC: moveToRecoveryRoom(user)
+    activate HC
+    HC -> HC: remove from waitingRoom
+    HC -> HC: recoveryRoom.push_back(user)
+    HC --> CTRL: returns true
+    deactivate HC
+
+    CTRL -> HC: addVaccinationProcess(vp)
+
+    CTRL --> UI: returns true
+    deactivate CTRL
+
+    UI --> Nurse: confirms administration and informs that user was moved to the Recovery Room
+end
+
+deactivate UI
+deactivate Nurse
+@enduml

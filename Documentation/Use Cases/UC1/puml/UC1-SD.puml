@@ -1,0 +1,45 @@
+@startuml SD_CreateVaccineType
+title SD: UC1 - Create Vaccine Type
+skinparam maxMessageSize 150
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant ": VaccineController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "vt: VaccineType" as VT
+
+autonumber
+
+activate Admin
+Admin -> UI: starts specifying a new vaccine type
+activate UI
+
+UI --> Admin: requests data (code, disease, recoveryPeriod) and presents list of technologies
+deactivate UI
+
+Admin -> UI: inputs data (code, disease, recoveryPeriod) and selects technology
+activate UI
+
+
+UI -> CTRL: createVaccineType(code, disease, technology, recoveryPeriod)
+activate CTRL
+
+CTRL -> VT ** : create(code, disease, technology, recoveryPeriod)
+
+CTRL -> HC: addVaccineType(vt)
+activate HC
+
+HC -> HC: validateCodeUniqueness(code)
+HC -> HC: vaccineCatalog.push_back(vt)
+
+HC --> CTRL: returns true (success)
+deactivate HC
+
+CTRL --> UI: returns true
+deactivate CTRL
+
+UI --> Admin: confirms successful creation
+deactivate UI
+deactivate Admin
+
+@enduml

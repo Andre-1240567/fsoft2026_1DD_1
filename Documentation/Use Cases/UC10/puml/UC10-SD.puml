@@ -1,0 +1,49 @@
+@startuml SD_ConsultWaitingRoom
+title SD: Issue 10 - Consult Waiting Room
+skinparam maxMessageSize 150
+
+actor "Nurse" as Nurse
+participant ": MainMenu" as UI
+participant ": WaitingRoomController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "user: SNSUser" as User
+
+autonumber
+
+activate Nurse
+Nurse -> UI: requests the list of users in the waiting room
+activate UI
+
+UI -> CTRL: getWaitingRoomList()
+activate CTRL
+
+CTRL -> HC: getWaitingRoom()
+activate HC
+HC --> CTRL: returns vector<SNSUser*>
+deactivate HC
+
+CTRL --> UI: returns list of users
+deactivate CTRL
+
+alt waiting room is empty
+    UI --> Nurse: displays "Waiting room is currently empty" message
+else waiting room has users
+
+    loop for each user in list (index 0 to N)
+        UI -> User: getSnsNumber()
+        activate User
+        User --> UI: returns snsNumber
+        deactivate User
+
+        UI -> User: getName()
+        activate User
+        User --> UI: returns name
+        deactivate User
+    end
+
+    UI --> Nurse: displays the list of users in FIFO order (SNS Number and Name)
+end
+
+deactivate UI
+deactivate Nurse
+@enduml

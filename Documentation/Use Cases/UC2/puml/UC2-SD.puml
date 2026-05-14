@@ -1,0 +1,54 @@
+@startuml SD_RegisterPhysicalVaccine
+title SD: UC2 - Register Physical Vaccine
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant ": VaccineController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "v: Vaccine" as V
+
+autonumber
+
+activate Admin
+Admin -> UI: starts vaccine registration
+activate UI
+
+UI -> CTRL: getVaccineCatalog()
+activate CTRL
+CTRL -> HC: getVaccineCatalog()
+activate HC
+HC --> CTRL: returns vector<VaccineType*>
+deactivate HC
+CTRL --> UI: returns list of types
+deactivate CTRL
+
+UI --> Admin: shows list of VaccineTypes
+deactivate UI
+
+Admin -> UI: selects vaccine type and inputs data (brand, lot, expiry, quantity)
+activate UI
+
+UI -> CTRL: registerVaccine(typeIndex, brand, lot, expiry, quantity)
+activate CTRL
+
+CTRL -> HC: getVaccineType(typeIndex)
+activate HC
+HC --> CTRL: returns VaccineType*
+deactivate HC
+
+CTRL -> V ** : create(brand, lot, expiry, quantity, vaccineType)
+
+CTRL -> HC: addVaccineToInventory(v)
+activate HC
+HC -> HC: inventory.push_back(v)
+HC --> CTRL: returns true
+deactivate HC
+
+CTRL --> UI: returns true
+deactivate CTRL
+
+UI --> Admin: confirms successful registration
+deactivate UI
+deactivate Admin
+
+@enduml
