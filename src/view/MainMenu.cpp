@@ -1,11 +1,12 @@
-//
-// Created by pc-andre on 4/26/26.
-//
-
 #include "MainMenu.h"
 #include "Utils.h"
+#include "../model/HealthcareCenter.h"
+#include "../controller/VaccineController.h"
 #include <iostream>
 #include <string>
+
+static HealthcareCenter globalHC("MedManager Center", "Rua Principal", "912345678", "geral@med.pt");
+static VaccineController vaccineController(&globalHC);
 
 
 // ---- UC1 ----
@@ -15,25 +16,45 @@ void uc1_createVaccineType() {
     std::cout << "   UC1 - Criar Tipo de Vacina\n";
     std::cout << "========================================\n\n";
 
-    std::string code, disease, description;
+    std::string code, disease, technology;
+    int recoveryPeriod;
+
     std::cout << "Codigo      : "; std::getline(std::cin, code);
     std::cout << "Doenca      : "; std::getline(std::cin, disease);
-    std::cout << "Descricao   : "; std::getline(std::cin, description);
+
+    // Menu para a Tecnologia
+    std::cout << "\nTecnologias disponiveis:\n";
+    std::cout << "  1. mRNA\n  2. Viral Vector\n  3. Proteina Subunitaria\n";
+    int techChoice = readInt("Selecione a tecnologia: ", 1, 3);
+
+    if (techChoice == 1) technology = "mRNA";
+    else if (techChoice == 2) technology = "Viral Vector";
+    else technology = "Proteina Subunitaria";
+
+    // Pedir o Período de Recobro
+    recoveryPeriod = readInt("\nPeriodo de Recobro (minutos): ", 0, 120);
 
     std::cout << "\n--- Confirmar dados ---\n";
-    std::cout << "Codigo    : " << code        << "\n";
-    std::cout << "Doenca    : " << disease     << "\n";
-    std::cout << "Descricao : " << description << "\n";
+    std::cout << "Codigo     : " << code << "\n";
+    std::cout << "Doenca     : " << disease << "\n";
+    std::cout << "Tecnologia : " << technology << "\n";
+    std::cout << "Recobro    : " << recoveryPeriod << " mins\n";
 
     int confirm = readInt("\nConfirma? (1-Sim / 2-Nao): ", 1, 2);
     if (confirm == 1) {
-        // TODO: VaccineTypeController::create(code, disease, description)
-        std::cout << "\n[OK] Tipo de vacina registado!\n";
+        // Chamada real ao Controller
+        bool success = vaccineController.createVaccineType(code, disease, technology, recoveryPeriod);
+
+        if (success) {
+            std::cout << "\n[OK] Tipo de vacina registado com sucesso!\n";
+        } else {
+            std::cout << "\n[ERRO] Ja existe um tipo de vacina com o codigo '" << code << "'.\n";
+        }
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
     pause();
-    }
+}
 
 // ---- UC2 ----
 void uc2_registerPhysicalVaccine() {
