@@ -1,0 +1,154 @@
+@startuml DesignClassDiagram
+title Design Class Diagram - MedManager
+skinparam classAttributeIconSize 0
+hide circle
+
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+class MainMenu {
+    + mainMenu(): void
+    + menuCenterAdministrator(): void
+    + clearScreen(): void
+    + readInt(prompt: string, min: int, max: int): int
+}
+
+class VaccineController {
+    + createVaccineType(code: string, disease: string, tech: string, recPeriod: int): bool
+    + registerVaccine(typeIndex: int, brand: string, lot: string, expiry: string, qty: int): bool
+    + getVaccineStockGroupedAndSorted(): map<VaccineType*, vector<Vaccine*>>
+}
+
+class EmployeeController {
+    + registerEmployee(role: int, id: string, name: string, address: string, phone: string, email: string, cc: string): bool
+    + getEmployeesByRole(role: int): vector<Employee*>
+}
+
+class SNSUserController {
+    + registerSNSUser(snsNumber: string, name: string, address: string, birthdate: string, phone: string, cc: string, sex: string): bool
+}
+
+class AppointmentController {
+    + createAppointment(snsNumber: string, typeIndex: int, date: string, time: string): bool
+    + checkUserExists(snsNumber: string): bool
+    + hasPendingAppointment(snsNumber: string, typeIndex: int): bool
+}
+
+class ArrivalController {
+    + registerArrival(snsNumber: string): bool
+}
+
+class VaccinationController {
+    + recordAdministration(snsNumber: string, lotNumber: string): bool
+}
+
+class WaitingRoomController {
+    + getWaitingRoomList(): vector<SNSUser*>
+}
+
+class HealthcareCenter {
+    - name: string
+    - address: string
+    - phone: string
+    - email: string
+    + addVaccineType(vt: VaccineType*): bool
+    + addVaccineToInventory(v: Vaccine*): bool
+    + addEmployee(emp: Employee*): bool
+    + registerSNSUser(user: SNSUser*): bool
+    + addAppointment(appt: Appointment*): bool
+    + addArrivalAndQueueUser(arr: Arrival*, user: SNSUser*): bool
+    + moveToRecoveryRoom(user: SNSUser*): bool
+    + getWaitingRoom(): vector<SNSUser*>
+    + getInventory(): vector<Vaccine*>
+    + getEmployees(): vector<Employee*>
+}
+
+class Employee {
+    - name: string
+    - phone: string
+    - email: string
+    - citizenCard: string
+    + getName(): string
+    + getPhone(): string
+    + getEmail(): string
+    + getRole(): string <<virtual>>
+}
+
+class CenterAdministrator extends Employee
+class Nurse extends Employee
+class Receptionist extends Employee
+
+class VaccineType {
+    - code: string
+    - disease: string
+    - technology: string
+    - recoveryPeriod: int
+    + getCode(): string
+}
+
+class Vaccine {
+    - brand: string
+    - lotNumber: string
+    - expirationDate: string
+    - quantity: int
+    + decreaseQuantity(amount: int): void
+}
+
+class SNSUser {
+    - snsNumber: string
+    - name: string
+    - address: string
+    - birthdate: string
+    - phone: string
+    - sex: string
+    - citizenCardNumber: string
+    + getSnsNumber(): string
+    + getName(): string
+}
+
+class Appointment {
+    - date: string
+    - time: string
+    - status: string
+    + setStatus(status: string): void
+}
+
+class Arrival {
+    - arrivalTime: string
+}
+
+class VaccinationProcess {
+    - timestamp: string
+}
+
+
+MainMenu -down..> VaccineController : uses >
+MainMenu -down..> EmployeeController : uses >
+MainMenu -down..> SNSUserController : uses >
+MainMenu -down..> AppointmentController : uses >
+MainMenu -down..> ArrivalController : uses >
+MainMenu -down..> VaccinationController : uses >
+MainMenu -down..> WaitingRoomController : uses >
+
+VaccineController -down-> "1" HealthcareCenter : updates >
+EmployeeController -down-> "1" HealthcareCenter : updates >
+SNSUserController -down-> "1" HealthcareCenter : updates >
+AppointmentController -down-> "1" HealthcareCenter : updates >
+ArrivalController -down-> "1" HealthcareCenter : updates >
+VaccinationController -down-> "1" HealthcareCenter : updates >
+WaitingRoomController -down-> "1" HealthcareCenter : reads >
+
+HealthcareCenter "1" o-down- "0..*" Employee : employs >
+HealthcareCenter "1" o-down- "0..*" VaccineType : catalog >
+HealthcareCenter "1" o-down- "0..*" Vaccine : inventory >
+HealthcareCenter "1" o-down- "0..*" SNSUser : registry >
+HealthcareCenter "1" o-down- "0..*" Appointment : schedule >
+
+Vaccine "0..*" -right- "1" VaccineType : is of >
+Appointment "0..*" -right- "1" SNSUser : for >
+Appointment "0..*" -left- "1" VaccineType : refers to >
+Arrival "0..*" -right- "1" Appointment : linked to >
+VaccinationProcess "0..*" -right- "1" Vaccine : uses >
+
+@enduml
