@@ -1,13 +1,16 @@
 #include "MainMenu.h"
 #include "Utils.h"
 #include "../model/HealthcareCenter.h"
+#include "../model/VaccineType.h"
+#include "../model/Vaccine.h"
 #include "../controller/VaccineController.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
+// Instâncias globais estáticas para a UI conseguir comunicar com a lógica do sistema
 static HealthcareCenter globalHC("MedManager Center", "Rua Principal", "912345678", "geral@med.pt");
 static VaccineController vaccineController(&globalHC);
-
 
 // ---- UC1 ----
 void uc1_createVaccineType() {
@@ -63,30 +66,53 @@ void uc2_registerPhysicalVaccine() {
     std::cout << "   UC2 - Registar Vacina Fisica\n";
     std::cout << "========================================\n\n";
 
-    // TODO: mostrar tipos reais do repositorio
-    std::cout << "Tipos disponiveis:\n";
-    std::cout << "  1. COVID-19\n  2. Gripe\n  0. Cancelar\n";
-    int typeChoice = readInt("Selecione o tipo: ", 0, 2);
+    // 1. Obter catálogo real através do controlador
+    std::vector<VaccineType*> catalog = vaccineController.getVaccineCatalog();
+
+    // Se o catálogo estiver vazio, avisa o utilizador e aborta
+    if (catalog.empty()) {
+        std::cout << "[AVISO] Nao existem Tipos de Vacina registados no sistema.\n";
+        std::cout << "Por favor, execute a UC1 primeiro para popular o catalogo.\n";
+        pause();
+        return;
+    }
+
+    std::cout << "Tipos de vacina disponiveis no catalogo:\n";
+    for (size_t i = 0; i < catalog.size(); ++i) {
+        std::cout << "  " << (i + 1) << ". " << catalog[i]->getCode() << "\n";
+    }
+    std::cout << "  0. Cancelar\n";
+
+    int typeChoice = readInt("Selecione o tipo: ", 0, catalog.size());
     if (typeChoice == 0) return;
 
-    std::cout << "\nTecnologias:\n";
-    std::cout << "  1. mRNA\n  2. Viral Vector\n  3. Proteina Subunitaria\n";
-    int techChoice = readInt("Selecione a tecnologia: ", 1, 3);
+    // Ajustar o index (com base 0) para o vetor
+    int realIndex = typeChoice - 1;
 
     std::string brand, lotNumber, expirationDate;
+    int quantity;
+
     std::cout << "\nMarca           : "; std::getline(std::cin, brand);
     std::cout << "Numero de Lote  : "; std::getline(std::cin, lotNumber);
     std::cout << "Data Validade   : "; std::getline(std::cin, expirationDate);
+    quantity = readInt("Quantidade      : ", 1, 10000);
 
     std::cout << "\n--- Confirmar dados ---\n";
+    std::cout << "Tipo Associado: " << catalog[realIndex]->getCode() << "\n";
     std::cout << "Marca         : " << brand          << "\n";
     std::cout << "Lote          : " << lotNumber      << "\n";
     std::cout << "Data Validade : " << expirationDate << "\n";
+    std::cout << "Quantidade    : " << quantity       << "\n";
 
     int confirm = readInt("\nConfirma? (1-Sim / 2-Nao): ", 1, 2);
     if (confirm == 1) {
-        // TODO: VaccineController::register(...)
-        std::cout << "\n[OK] Vacina registada!\n";
+        // Chamada real ao Controller para associar o tipo e guardar o lote
+        bool success = vaccineController.registerVaccine(realIndex, brand, lotNumber, expirationDate, quantity);
+        if (success) {
+            std::cout << "\n[OK] Lote de vacinas registado com sucesso no inventario!\n";
+        } else {
+            std::cout << "\n[ERRO] Falha ao registar a vacina.\n";
+        }
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
@@ -100,11 +126,30 @@ void uc3_listVaccineStock() {
     std::cout << "   UC3 - Stock de Vacinas\n";
     std::cout << "========================================\n\n";
 
-    // TODO: obter lista real do repositorio
-    std::cout << "Tipo: COVID-19\n";
-    std::cout << "  Pfizer | Lote: PF-001 | Validade: 01/12/2026\n\n";
-    std::cout << "Tipo: Gripe\n";
-    std::cout << "  Sanofi | Lote: SN-007 | Validade: 30/04/2026\n";
+    // Pedir o stock já agrupado e ordenado ao Controller
+    std::map<VaccineType*, std::vector<Vaccine*>> stock = vaccineController.getVaccineStockGroupedAndSorted();
+
+    if (stock.empty()) {
+        std::cout << "[INFO] Nao existe stock de vacinas no inventario do Centro.\n";
+    } else {
+        // Iterar pelo mapa (Chave = VaccineType*, Valor = vector<Vaccine*>)
+        for (const auto& pair : stock) {
+            VaccineType* vt = pair.first;
+            const std::vector<Vaccine*>& vaccines = pair.second;
+
+            // Imprimir o cabeçalho do Tipo de Vacina
+            std::cout << "Tipo: " << vt->getCode() << " (" << vaccines.size() << " lotes)\n";
+
+            // Imprimir as vacinas físicas associadas a este tipo
+            for (Vaccine* v : vaccines) {
+                std::cout << "  -> Marca: " << v->getBrand()
+                          << " | Lote: " << v->getLotNumber()
+                          << " | Validade: " << v->getExpirationDate()
+                          << " | Qtd: " << v->getQuantity() << "\n";
+            }
+            std::cout << "\n"; // Espaço entre categorias
+        }
+    }
 
     pause();
 }
@@ -164,7 +209,7 @@ void uc5_listEmployeesByRole() {
     pause();
 }
 
-// ---- Menu Administrador ----
+// ---- Menu Administrator ----
 void menuCenterAdministrator() {
     int option;
     do {

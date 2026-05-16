@@ -1,44 +1,14 @@
-//
-// Created by pc-andre on 4/26/26.
-//
-
 #include "Vaccine.h"
 
-Vaccine::Vaccine()
-{
-    code = "";
-    disease = "";
-    technology = "";
-    recoveryPeriod = 0;
-}
+Vaccine::Vaccine(std::string brand, std::string lotNumber, std::string expirationDate, int quantity, VaccineType* type)
+    : brand(brand), lotNumber(lotNumber), expirationDate(expirationDate), quantity(quantity), type(type) {}
 
-Vaccine::Vaccine(string code,
-                 string disease,
-                 string technology,
-                 int recoveryPeriod)
-{
-    this->code = code;
-    this->disease = disease;
-    this->technology = technology;
-    this->recoveryPeriod = recoveryPeriod;
-}
+std::string Vaccine::getBrand() const { return brand; }
 
-string Vaccine::getCode() const
-{
-    return code;
-}
+std::string Vaccine::getLotNumber() const { return lotNumber; }
 
-string Vaccine::getDisease() const
-{
-    return disease;
-}
+std::string Vaccine::getExpirationDate() const { return expirationDate; }
 
-string Vaccine::getTechnology() const
-{
-    return technology;
-}
+int Vaccine::getQuantity() const { return quantity; }
 
-int Vaccine::getRecoveryPeriod() const
-{
-    return recoveryPeriod;
-}
+VaccineType* Vaccine::getType() const { return type; }

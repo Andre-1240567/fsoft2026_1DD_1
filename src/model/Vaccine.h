@@ -1,33 +1,26 @@
-//
-// Created by pc-andre on 4/26/26.
-//
-
 #ifndef FSOFT2026_1DD_1_VACCINE_H
 #define FSOFT2026_1DD_1_VACCINE_H
 
 #include <string>
+#include "VaccineType.h"
 
-using namespace std;
-
-class Vaccine
-{
+class Vaccine {
 private:
-    string code;
-    string disease;
-    string technology;
-    int recoveryPeriod;
+    std::string brand;
+    std::string lotNumber;
+    std::string expirationDate;
+    int quantity;
+    VaccineType* type;
 
 public:
-    Vaccine();
-
-    Vaccine(string code,
-            string disease,
-            string technology,
-            int recoveryPeriod);
-    string getCode() const;
-    string getDisease() const;
-    string getTechnology() const;
-    int getRecoveryPeriod() const;
+    Vaccine(std::string brand, std::string lotNumber, std::string expirationDate, int quantity, VaccineType* type);
+    
+    // Getters
+    std::string getBrand() const;
+    std::string getLotNumber() const;
+    std::string getExpirationDate() const;
+    int getQuantity() const;
+    VaccineType* getType() const;
 };
 
-#endif //FSOFT2026_1DD_1_VACCINE_H
+#endif
