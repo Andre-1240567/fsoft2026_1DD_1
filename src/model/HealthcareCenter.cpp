@@ -17,3 +17,13 @@ bool HealthcareCenter::addVaccineType(VaccineType* vt) {
     vaccineCatalog.push_back(vt);
     return true;
 }
+
+// UC2
+
+std::vector<VaccineType*> HealthcareCenter::getVaccineCatalog() const {
+    return vaccineCatalog;
+}
+
+void HealthcareCenter::addVaccineToInventory(Vaccine* vaccine) {
+    inventory.push_back(vaccine);
+}

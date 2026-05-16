@@ -42,6 +42,7 @@ public:
 
     std::vector<Employee*> getEmployees() const;
     std::vector<SNSUser*> getWaitingRoom() const;
+    std::vector<VaccineType*> getVaccineCatalog() const;
 };
 
 #endif //FSOFT2026_1DD_1_HEALTHCARECENTER_H

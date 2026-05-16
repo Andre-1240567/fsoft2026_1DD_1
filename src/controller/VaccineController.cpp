@@ -1,10 +1,9 @@
-//
-// Created by pc-andre on 4/26/26.
-//
-
 #include "VaccineController.h"
 #include "../model/VaccineType.h"
 #include "../model/HealthcareCenter.h"
+#include "../model/Vaccine.h"
+#include <string>
+#include <vector>
 
 VaccineController::VaccineController(HealthcareCenter* hc)
 {
@@ -25,3 +24,25 @@ bool VaccineController::createVaccineType(
 
     return hc->addVaccineType(vt);
 }
+
+
+// UC2
+
+std::vector<VaccineType*> VaccineController::getVaccineCatalog() {
+    return hc->getVaccineCatalog();
+}
+
+bool VaccineController::registerVaccine(int typeIndex, std::string brand, std::string lot, std::string expiry, int qty) {
+    std::vector<VaccineType*> catalog = hc->getVaccineCatalog();
+
+    if (typeIndex < 0 || typeIndex >= catalog.size()) {
+        return false;
+    }
+
+    VaccineType* selectedType = catalog[typeIndex];
+    Vaccine* v = new Vaccine(brand, lot, expiry, qty, selectedType);
+    hc->addVaccineToInventory(v);
+
+    return true;
+}
+
