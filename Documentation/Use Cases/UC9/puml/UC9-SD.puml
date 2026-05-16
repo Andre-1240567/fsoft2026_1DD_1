@@ -1,5 +1,5 @@
 @startuml SD_RegisterArrival
-title SD: Issue 9 - Register Arrival of an SNS User
+title SD: UC9 - Register Arrival of an SNS User
 skinparam maxMessageSize 150
 
 actor "Receptionist" as Rec

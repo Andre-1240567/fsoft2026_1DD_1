@@ -1,5 +1,5 @@
 @startuml SD_RegisterSNSUser
-title SD: Issue 6 - Register an SNS User
+title SD: UC6 - Register an SNS User
 
 actor "Receptionist" as Rec
 participant ": MainMenu" as UI

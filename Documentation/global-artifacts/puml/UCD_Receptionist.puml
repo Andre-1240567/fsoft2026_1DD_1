@@ -1,0 +1,15 @@
+@startuml UCD_Receptionist
+title Use Case Diagram - Receptionist
+left to right direction
+
+actor "Receptionist" as Rec
+
+    usecase "UC6 - Register an SNS user" as UC6
+    usecase "UC8 - Schedule a vaccine administration" as UC8
+    usecase "UC9 - Register SNS User Arrival" as UC9
+
+
+Rec --> UC6
+Rec --> UC8
+Rec --> UC9
+@enduml

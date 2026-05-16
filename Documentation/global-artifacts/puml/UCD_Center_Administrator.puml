@@ -1,0 +1,20 @@
+@startuml UCD_Administrator
+title Use Case Diagram - Center Administrator
+left to right direction
+
+actor "Center Administrator" as Admin
+
+
+    usecase "UC1 - Specify Vaccine Type" as UC1
+    usecase "UC2 - Register a vaccine" as UC2
+    usecase "UC3 - Register an employee" as UC3
+    usecase "UC4 - List employees by function/role" as UC4
+    usecase "UC5 - List all vaccines" as UC5
+
+
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+Admin --> UC5
+@enduml

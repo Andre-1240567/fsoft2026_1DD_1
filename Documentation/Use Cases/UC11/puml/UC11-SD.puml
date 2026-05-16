@@ -1,5 +1,5 @@
 @startuml SD_RecordVaccineAdministration
-title SD: Issue 11 - Record Vaccine Administration
+title SD: UC11 - Record Vaccine Administration
 skinparam maxMessageSize 150
 
 actor "Nurse" as Nurse
