@@ -1,5 +1,6 @@
 #include "HealthcareCenter.h"
 #include "VaccineType.h"
+#include "Employee.h"
 
 HealthcareCenter::HealthcareCenter(std::string name, std::string address, std::string phone, std::string email)
     : name(name), address(address), phone(phone), email(email) {}
@@ -30,4 +31,22 @@ void HealthcareCenter::addVaccineToInventory(Vaccine* vaccine) {
 
 std::vector<Vaccine*> HealthcareCenter::getInventory() const {
     return inventory;
+}
+
+//UC4
+
+bool HealthcareCenter::addEmployee(Employee* emp) {
+    // Percorre a lista de funcionários já existentes no centro de saúde
+    for (Employee* existing : employees) {
+        // Se encontrar alguém com o mesmo CC, Email ou Telefone, aborta o registo
+        if (existing->getCitizenCard() == emp->getCitizenCard() ||
+            existing->getEmail() == emp->getEmail() ||
+            existing->getPhone() == emp->getPhone()) {
+            return false;
+            }
+    }
+
+    // Se os dados forem únicos, adiciona o funcionário ao vetor usando o push_back do C++
+    employees.push_back(emp);
+    return true;
 }

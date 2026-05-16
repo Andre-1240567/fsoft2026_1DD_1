@@ -4,6 +4,7 @@
 #include "../model/VaccineType.h"
 #include "../model/Vaccine.h"
 #include "../controller/VaccineController.h"
+#include "../controller/EmployeeController.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -11,6 +12,7 @@
 // Instâncias globais estáticas para a UI conseguir comunicar com a lógica do sistema
 static HealthcareCenter globalHC("MedManager Center", "Rua Principal", "912345678", "geral@med.pt");
 static VaccineController vaccineController(&globalHC);
+static EmployeeController employeeController(&globalHC);
 
 // ---- UC1 ----
 void uc1_createVaccineType() {
@@ -164,27 +166,29 @@ void uc4_registerEmployee() {
     std::cout << "Funcoes:\n  1. Enfermeiro\n  2. Rececionista\n";
     int roleChoice = readInt("Selecione a funcao: ", 1, 2);
 
-    std::string id, name, address, phone, email, cc;
-    std::cout << "\nID               : "; std::getline(std::cin, id);
+    std::string name, phone, email, cc;
     std::cout << "Nome             : "; std::getline(std::cin, name);
-    std::cout << "Morada           : "; std::getline(std::cin, address);
     std::cout << "Telefone         : "; std::getline(std::cin, phone);
     std::cout << "Email            : "; std::getline(std::cin, email);
     std::cout << "Cartao Cidadao   : "; std::getline(std::cin, cc);
 
     std::cout << "\n--- Confirmar dados ---\n";
     std::cout << "Funcao   : " << (roleChoice == 1 ? "Enfermeiro" : "Rececionista") << "\n";
-    std::cout << "ID       : " << id      << "\n";
     std::cout << "Nome     : " << name    << "\n";
-    std::cout << "Morada   : " << address << "\n";
     std::cout << "Telefone : " << phone   << "\n";
     std::cout << "Email    : " << email   << "\n";
     std::cout << "CC       : " << cc      << "\n";
 
     int confirm = readInt("\nConfirma? (1-Sim / 2-Nao): ", 1, 2);
     if (confirm == 1) {
-        // TODO: EmployeeController::register(...)
-        std::cout << "\n[OK] Funcionario registado!\n";
+        std::string role = (roleChoice == 1 ? "Enfermeiro" : "Rececionista");
+        // Chamada real ao Controller
+        bool success = employeeController.registerEmployee(name, phone, email, cc, role);
+        if (success) {
+            std::cout << "\n[OK] Funcionario registado com sucesso!\n";
+        } else {
+            std::cout << "\n[ERRO] Falha ao registar o funcionario!\n";
+        }
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
