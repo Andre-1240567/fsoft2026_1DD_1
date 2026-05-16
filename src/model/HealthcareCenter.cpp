@@ -27,3 +27,7 @@ std::vector<VaccineType*> HealthcareCenter::getVaccineCatalog() const {
 void HealthcareCenter::addVaccineToInventory(Vaccine* vaccine) {
     inventory.push_back(vaccine);
 }
+
+std::vector<Vaccine*> HealthcareCenter::getInventory() const {
+    return inventory;
+}

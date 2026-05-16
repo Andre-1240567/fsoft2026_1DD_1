@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include "../model/HealthcareCenter.h"
 #include "../model/VaccineType.h"
+#include "../model/Vaccine.h"
 #include "../controller/VaccineController.h"
 #include <iostream>
 #include <string>
@@ -125,11 +126,30 @@ void uc3_listVaccineStock() {
     std::cout << "   UC3 - Stock de Vacinas\n";
     std::cout << "========================================\n\n";
 
-    // TODO: obter lista real do repositorio (UC5 da vossa checklist original)
-    std::cout << "Tipo: COVID-19\n";
-    std::cout << "  Pfizer | Lote: PF-001 | Validade: 01/12/2026\n\n";
-    std::cout << "Tipo: Gripe\n";
-    std::cout << "  Sanofi | Lote: SN-007 | Validade: 30/04/2026\n";
+    // Pedir o stock já agrupado e ordenado ao Controller
+    std::map<VaccineType*, std::vector<Vaccine*>> stock = vaccineController.getVaccineStockGroupedAndSorted();
+
+    if (stock.empty()) {
+        std::cout << "[INFO] Nao existe stock de vacinas no inventario do Centro.\n";
+    } else {
+        // Iterar pelo mapa (Chave = VaccineType*, Valor = vector<Vaccine*>)
+        for (const auto& pair : stock) {
+            VaccineType* vt = pair.first;
+            const std::vector<Vaccine*>& vaccines = pair.second;
+
+            // Imprimir o cabeçalho do Tipo de Vacina
+            std::cout << "Tipo: " << vt->getCode() << " (" << vaccines.size() << " lotes)\n";
+
+            // Imprimir as vacinas físicas associadas a este tipo
+            for (Vaccine* v : vaccines) {
+                std::cout << "  -> Marca: " << v->getBrand()
+                          << " | Lote: " << v->getLotNumber()
+                          << " | Validade: " << v->getExpirationDate()
+                          << " | Qtd: " << v->getQuantity() << "\n";
+            }
+            std::cout << "\n"; // Espaço entre categorias
+        }
+    }
 
     pause();
 }

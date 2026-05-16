@@ -4,8 +4,10 @@
 #include "../model/HealthcareCenter.h"
 #include <string>
 #include <vector>
+#include <map>
 
 class VaccineType;
+class Vaccine;
 
 class VaccineController {
 private:
@@ -30,6 +32,9 @@ public:
             std::string lot,
             std::string expiry,
             int qty);
+
+    // UC3
+    std::map<VaccineType*, std::vector<Vaccine*>> getVaccineStockGroupedAndSorted();
 };
 
 #endif //FSOFT2026_1DD_1_VACCINECONTROLLER_H
