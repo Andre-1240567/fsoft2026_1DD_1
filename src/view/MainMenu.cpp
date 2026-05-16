@@ -5,6 +5,7 @@
 #include "../model/Vaccine.h"
 #include "../controller/VaccineController.h"
 #include "../controller/EmployeeController.h"
+#include "../model/Employee.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -203,13 +204,25 @@ void uc5_listEmployeesByRole() {
     std::cout << "========================================\n\n";
 
     std::cout << "Funcoes:\n  1. Enfermeiro\n  2. Rececionista\n";
-    int roleChoice = readInt("Selecione a funcao: ", 1, 2);
+    int choice = readInt("Selecione a funcao: ", 1, 2);
 
-    std::cout << "\n--- " << (roleChoice == 1 ? "Enfermeiros" : "Rececionistas") << " ---\n";
-    // TODO: obter lista real do repositorio
-    std::cout << "  ID: E001 | Nome: Maria Silva\n";
-    std::cout << "  ID: E002 | Nome: Joao Santos\n";
+    std::string roleChoice = (choice == 1 ? "Enfermeiro" : "Rececionista");
 
+    std::cout << "\n--- " << (choice == 1 ? "Enfermeiros" : "Rececionistas") << " ---\n";
+    // Chamar o Controller para obter a lista filtrada real
+    std::vector<Employee*> list = employeeController.getEmployeesByRole(roleChoice);
+    if (list.empty()) {
+        std::cout << " [INFO] Nenhum funcionario registado nesta funcao.\n";
+    } else {
+        for (Employee* emp : list) {
+            std::cout << "  -> Nome : " << emp->getName() << "\n"
+                      << "     Tel  : " << emp->getPhone() << "\n"
+                      << "     Email: " << emp->getEmail() << "\n"
+                      << "     CC   : " << emp->getCitizenCard() << "\n";
+            std::cout << "  --------------------------------------\n";
+        }
+        std::cout << " Total: " << list.size() << " funcionario(s) listado(s).\n";
+    }
     pause();
 }
 

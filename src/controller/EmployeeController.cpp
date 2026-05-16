@@ -13,7 +13,7 @@
 EmployeeController::EmployeeController(HealthcareCenter* hc) {
     this->hc = hc;
 }
-
+//UC4
 bool EmployeeController::registerEmployee(
     std::string name, std::string phone, std::string email, std::string cc, std::string role) {
 
@@ -36,4 +36,29 @@ bool EmployeeController::registerEmployee(
         return false;
     }
     return true;
+}
+
+//UC5
+std::vector<Employee*> EmployeeController::getEmployeesByRole(std::string role) {
+    std::vector<Employee*> filteredList;
+
+    // Obter todos os funcionários guardados no centro de saúde
+    std::vector<Employee*> allEmployees = hc->getEmployees();
+
+    for (Employee* emp : allEmployees) {
+        if (role == "Enfermeiro") {
+            // Se conseguir (não for nullptr), significa que ele é mesmo um Enfermeiro
+            if (dynamic_cast<Nurse*>(emp) != nullptr) {
+                filteredList.push_back(emp);
+            }
+        }
+        else if (role == "Rececionista") {
+            // Tenta converter o Employee* genérico para Receptionist*
+            if (dynamic_cast<Receptionist*>(emp) != nullptr) {
+                filteredList.push_back(emp);
+            }
+        }
+    }
+
+    return filteredList;
 }

@@ -50,3 +50,7 @@ bool HealthcareCenter::addEmployee(Employee* emp) {
     employees.push_back(emp);
     return true;
 }
+//UC5
+std::vector<Employee*> HealthcareCenter::getEmployees() const {
+    return employees; // Garante que o nome deste vetor condiz com o definido no teu HealthcareCenter.h
+}

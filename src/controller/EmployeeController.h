@@ -15,7 +15,8 @@ private:
 
 public:
     EmployeeController(HealthcareCenter* hc);
-
+    //UC5
+    std::vector<Employee*> getEmployeesByRole(std::string role);
     //VC4
     bool registerEmployee(
         std::string name,
