@@ -1,5 +1,5 @@
 @startuml SD_ListEmployeesByRole
-title SD: Issue 4 - List Employees by Role
+title SD: UC4 - List Employees by Role
 
 actor "Center Administrator" as Admin
 participant ": MainMenu" as UI

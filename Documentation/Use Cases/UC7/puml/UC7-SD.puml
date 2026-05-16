@@ -1,5 +1,5 @@
 @startuml SD_ScheduleVaccine_SNSUser
-title SD: Issue 7 - Schedule a Vaccine Administration (SNS User)
+title SD: UC7 - Schedule a Vaccine Administration (SNS User)
 skinparam maxMessageSize 150
 
 actor "SNS User" as User

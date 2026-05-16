@@ -1,5 +1,5 @@
 @startuml SD_ConsultWaitingRoom
-title SD: Issue 10 - Consult Waiting Room
+title SD: UC10 - Consult Waiting Room
 skinparam maxMessageSize 150
 
 actor "Nurse" as Nurse

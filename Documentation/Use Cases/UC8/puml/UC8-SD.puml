@@ -1,5 +1,5 @@
 @startuml SD_ScheduleVaccine_Receptionist
-title SD: Issue 8 - Schedule a Vaccine Administration (Receptionist)
+title SD: UC8 - Schedule a Vaccine Administration (Receptionist)
 skinparam maxMessageSize 150
 
 actor "Receptionist" as Rec

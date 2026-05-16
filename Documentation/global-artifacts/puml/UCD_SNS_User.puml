@@ -1,0 +1,10 @@
+@startuml UCD_SNSUser
+title Use Case Diagram - SNS User
+left to right direction
+
+actor "SNS User" as User
+
+    usecase "UC7 - Schedule a vaccine administration" as UC7
+
+User --> UC7
+@enduml

@@ -1,5 +1,5 @@
 @startuml SD_ListVaccinesStock
-title SD: Issue 5 - List Vaccines Stock
+title SD: UC5 - List Vaccines Stock
 
 actor "Center Administrator" as Admin
 participant ": MainMenu" as UI

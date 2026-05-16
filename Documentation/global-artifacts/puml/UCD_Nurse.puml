@@ -1,0 +1,13 @@
+@startuml UCD_Nurse
+title Use Case Diagram - Nurse
+left to right direction
+
+actor "Nurse" as Nurse
+
+
+    usecase "UC10 - Consult SNS Users in the Waiting Room" as UC10
+    usecase "UC11 - Record vaccine administration" as UC11
+
+Nurse --> UC10
+Nurse --> UC11
+@enduml
