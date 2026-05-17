@@ -1,0 +1,183 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[landscape, top=1.2cm, bottom=2.0cm, left=1.0cm, right=1.0cm]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shadows}
+\usepackage{xcolor}
+
+\definecolor{boxBg}{RGB}{252,252,252}
+\definecolor{boxBorder}{RGB}{75,75,75}
+\definecolor{arrowFwd}{RGB}{40,90,160}
+\definecolor{arrowBck}{RGB}{140,155,170}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+    node distance = 1.6cm and 2.6cm,
+    box/.style={
+        draw=boxBorder, line width=0.8pt,
+        fill=boxBg,
+        rounded corners=3pt,
+        font=\ttfamily\scriptsize,
+        align=left,
+        text width=5.8cm,
+        inner sep=6pt,
+        drop shadow={shadow xshift=2pt, shadow yshift=-2pt, opacity=0.20}
+    },
+    fwd/.style={->, >=Stealth, line width=1.2pt, draw=arrowFwd},
+    bck/.style={->, >=Stealth, line width=0.8pt, dashed, draw=arrowBck},
+    lbl/.style={font=\sffamily\bfseries\small,
+                fill=white, draw=arrowFwd!50,
+                rounded corners=2pt,
+                inner sep=2pt, outer sep=1pt}
+]
+
+%% ── MENU PRINCIPAL ────────────────────────────────────
+\node[box] (MP) {%
+========================================\\
+\ \ \ \ \ \ \ \ MedManager v1.0\\
+\ \ Gestao do Centro de Vacinacao\\
+========================================\\
+\ 1.\ Administrador do Centro\\
+\ 2.\ Rececionista\ \ \ [em breve]\\
+\ 3.\ Enfermeiro\ \ \ \ \ [em breve]\\
+\ 0.\ Sair\\
+========================================\\
+Opcao:%
+};
+
+%% ── MENU ADMINISTRADOR ────────────────────────────────
+\node[box, below=2.2cm of MP] (MA) {%
+========================================\\
+\ \ \ \ \ ADMINISTRADOR DO CENTRO\\
+========================================\\
+\ 1.\ Criar Tipo de Vacina\\
+\ 2.\ Registar Vacina Fisica\\
+\ 3.\ Registar Funcionario\\
+\ 4.\ Listar Funcionarios por Funcao\\
+\ 5.\ Listar Stock de Vacinas\\
+\ 0.\ Voltar\\
+========================================\\
+Opcao:%
+};
+
+%% ── UC1 - Criar Tipo de Vacina (esquerda) ─────────────
+\node[box, left=2.8cm of MA] (UC1) {%
+========================================\\
+\ \ \ UC1 - Criar Tipo de Vacina\\
+========================================\\
+Codigo\ \ \ \ :\\
+Doenca\ \ \ \ :\\
+Tecnologias disponiveis: (Lista)\\
+Selecione:\\
+Recobro (min):\\
+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}\\
+Confirma?\ (1-Sim\ /\ 2-Nao):\\[2pt]
+{[}OK{]}\ Tipo registado\ com\ sucesso!%
+};
+
+%% ── UC2 - Registar Vacina Fisica (acima de UC1) ───────
+\node[box, above=1.5cm of UC1] (UC2) {%
+========================================\\
+\ \ UC2 - Registar Vacina Fisica\\
+========================================\\
+Tipo Associado:\\
+Nome Comercial:\\
+Marca\ \ \ \ \ \ :\\
+Lote\ \ \ \ \ \ \ :\\
+Data Validade\ :\\
+Quantidade:\\
+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}\\
+Confirma?\ (1-Sim\ /\ 2-Nao):\\[2pt]
+{[}OK{]}\ Lote registado\ com\ sucesso!%
+};
+
+%% ── UC3 - Registar Funcionario (abaixo de UC1) ────────
+\node[box, below=1.5cm of UC1] (UC3) {%
+========================================\\
+\ \ \ UC3 - Registar Funcionario\\
+========================================\\
+Funcao\ \ \ :\ 1.Enfermeiro\ 2.Recec.\\
+Nome\ \ \ \ \ :\\
+Morada\ \ \ :\\
+Telefone\ :\\
+Email\ \ \ \ :\\
+CC\ \ \ \ \ \ \ :\\
+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}\\
+Confirma?\ (1-Sim\ /\ 2-Nao):\\[2pt]
+{[}OK{]}\ Funcionario\ registado!%
+};
+
+%% ── UC4 - Listar Funcionarios (abaixo de MA) ──────────
+\node[box, below=1.5cm of MA] (UC4) {%
+========================================\\
+\ \ UC4 - Listar Funcionarios\\
+\ \ \ \ \ \ \ \ \ \ \ \ por Funcao\\
+========================================\\
+Funcoes:\ 1.Enfermeiro\ \ 2.Recec.\\
+Selecione:\\
+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}\\
+(Lista)\\
+\ {-}{-}\textgreater{}\ Nome\ :\ \textless{}nome\textgreater{}\\
+\ \ \ \ \ \ \ Tel\ \ :\ \textless{}tel\textgreater{}\\
+\ \ \ \ \ \ \ Email:\ \textless{}email\textgreater{}\\
+\ \ \ \ \ \ \ CC\ \ \ :\ \textless{}cc\textgreater{}\\
+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}\\
+Total:\ N\ funcionario(s).%
+};
+
+%% ── UC5 - Stock de Vacinas (direita) ──────────────────
+\node[box, right=2.8cm of MA] (UC5) {%
+========================================\\
+\ \ \ UC5 - Stock de Vacinas\\
+========================================\\
+Tipo:\ \textless{}cod\textgreater{}\ N lote(s)\\
+\ {-}{-}\textgreater{}\ Nome:\ \textless{}nome\textgreater{}\\
+\ \ \ \ \ \ Marca:\ \textless{}marca\textgreater{}\\
+\ \ \ \ \ \ Lote:\ \textless{}lote\textgreater{}\\
+\ \ \ \ \ \ Validade:\ \textless{}data\textgreater{}\\
+\ \ \ \ \ \ Qtd:\ \textless{}qtd\textgreater{}%
+};
+
+%% ── SETAS ─────────────────────────────────────────────
+
+% MP <-> MA
+\draw[fwd]  ([xshift= 6pt]MP.south) -- node[lbl, right=2pt] {1} ([xshift= 6pt]MA.north);
+\draw[bck]  ([xshift=-6pt]MA.north) -- node[lbl, left=2pt]  {0} ([xshift=-6pt]MP.south);
+
+% MA <-> UC1 (opcao 1)
+\draw[fwd]  ([yshift= 5pt]MA.west)  -- node[lbl, above=2pt] {1} ([yshift= 5pt]UC1.east);
+\draw[bck]  ([yshift=-5pt]UC1.east) -- ([yshift=-5pt]MA.west);
+
+% MA <-> UC2 (opcao 2)
+\draw[fwd]  (MA.north west) -- node[lbl, above=1pt, sloped] {2} (UC2.east);
+\draw[bck]  ([yshift=-4pt]UC2.east) -- ([xshift=4pt]MA.north west);
+
+% MA <-> UC3 (opcao 3)
+\draw[fwd]  (MA.south west) -- node[lbl, below=1pt, sloped] {3} (UC3.east);
+\draw[bck]  ([yshift=4pt]UC3.east) -- ([xshift=4pt]MA.south west);
+
+% MA <-> UC4 (opcao 4)
+\draw[fwd]  ([xshift=-6pt]MA.south) -- node[lbl, left=2pt] {4} ([xshift=-6pt]UC4.north);
+\draw[bck]  ([xshift= 6pt]UC4.north) -- ([xshift= 6pt]MA.south);
+
+% MA <-> UC5 (opcao 5)
+\draw[fwd]  ([yshift= 5pt]MA.east)  -- node[lbl, above=2pt] {5} ([yshift= 5pt]UC5.west);
+\draw[bck]  ([yshift=-5pt]UC5.west) -- ([yshift=-5pt]MA.east);
+
+\end{tikzpicture}
+
+\caption{%
+  \textbf{User Interface Design} -- Diagrama de Fluxo de Ecrãs (CLI),
+  Ator: Administrador do Centro.
+  Setas a cheio (\(\rightarrow\)) representam navegação de entrada;
+  setas a tracejado representam retorno ao menu anterior.
+}
+\label{fig:ui_flow_admin}
+\end{figure}
+
+\end{document}
