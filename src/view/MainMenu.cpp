@@ -4,6 +4,8 @@
 #include "../model/VaccineType.h"
 #include "../model/Vaccine.h"
 #include "../controller/VaccineController.h"
+#include "../controller/EmployeeController.h"
+#include "../model/Employee.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -11,6 +13,7 @@
 // Instâncias globais estáticas para a UI conseguir comunicar com a lógica do sistema
 static HealthcareCenter globalHC("MedManager Center", "Rua Principal", "912345678", "geral@med.pt");
 static VaccineController vaccineController(&globalHC);
+static EmployeeController employeeController(&globalHC);
 
 // ---- UC1 ----
 void uc1_createVaccineType() {
@@ -34,20 +37,17 @@ void uc1_createVaccineType() {
     else if (techChoice == 2) technology = "Viral Vector";
     else technology = "Proteina Subunitaria";
 
-    // Pedir o Período de Recobro
     recoveryPeriod = readInt("\nPeriodo de Recobro (minutos): ", 0, 120);
 
     std::cout << "\n--- Confirmar dados ---\n";
-    std::cout << "Codigo     : " << code << "\n";
-    std::cout << "Doenca     : " << disease << "\n";
-    std::cout << "Tecnologia : " << technology << "\n";
+    std::cout << "Codigo     : " << code         << "\n";
+    std::cout << "Doenca     : " << disease      << "\n";
+    std::cout << "Tecnologia : " << technology   << "\n";
     std::cout << "Recobro    : " << recoveryPeriod << " mins\n";
 
     int confirm = readInt("\nConfirma? (1-Sim / 2-Nao): ", 1, 2);
     if (confirm == 1) {
-        // Chamada real ao Controller
         bool success = vaccineController.createVaccineType(code, disease, technology, recoveryPeriod);
-
         if (success) {
             std::cout << "\n[OK] Tipo de vacina registado com sucesso!\n";
         } else {
@@ -66,10 +66,8 @@ void uc2_registerPhysicalVaccine() {
     std::cout << "   UC2 - Registar Vacina Fisica\n";
     std::cout << "========================================\n\n";
 
-    // 1. Obter catálogo real através do controlador
     std::vector<VaccineType*> catalog = vaccineController.getVaccineCatalog();
 
-    // Se o catálogo estiver vazio, avisa o utilizador e aborta
     if (catalog.empty()) {
         std::cout << "[AVISO] Nao existem Tipos de Vacina registados no sistema.\n";
         std::cout << "Por favor, execute a UC1 primeiro para popular o catalogo.\n";
@@ -86,7 +84,6 @@ void uc2_registerPhysicalVaccine() {
     int typeChoice = readInt("Selecione o tipo: ", 0, catalog.size());
     if (typeChoice == 0) return;
 
-    // Ajustar o index (com base 0) para o vetor
     int realIndex = typeChoice - 1;
 
     std::string brand, lotNumber, expirationDate;
@@ -106,7 +103,6 @@ void uc2_registerPhysicalVaccine() {
 
     int confirm = readInt("\nConfirma? (1-Sim / 2-Nao): ", 1, 2);
     if (confirm == 1) {
-        // Chamada real ao Controller para associar o tipo e guardar o lote
         bool success = vaccineController.registerVaccine(realIndex, brand, lotNumber, expirationDate, quantity);
         if (success) {
             std::cout << "\n[OK] Lote de vacinas registado com sucesso no inventario!\n";
@@ -120,92 +116,99 @@ void uc2_registerPhysicalVaccine() {
 }
 
 // ---- UC3 ----
-void uc3_listVaccineStock() {
+void uc3_registerEmployee() {
     clearScreen();
     std::cout << "========================================\n";
-    std::cout << "   UC3 - Stock de Vacinas\n";
-    std::cout << "========================================\n\n";
-
-    // Pedir o stock já agrupado e ordenado ao Controller
-    std::map<VaccineType*, std::vector<Vaccine*>> stock = vaccineController.getVaccineStockGroupedAndSorted();
-
-    if (stock.empty()) {
-        std::cout << "[INFO] Nao existe stock de vacinas no inventario do Centro.\n";
-    } else {
-        // Iterar pelo mapa (Chave = VaccineType*, Valor = vector<Vaccine*>)
-        for (const auto& pair : stock) {
-            VaccineType* vt = pair.first;
-            const std::vector<Vaccine*>& vaccines = pair.second;
-
-            // Imprimir o cabeçalho do Tipo de Vacina
-            std::cout << "Tipo: " << vt->getCode() << " (" << vaccines.size() << " lotes)\n";
-
-            // Imprimir as vacinas físicas associadas a este tipo
-            for (Vaccine* v : vaccines) {
-                std::cout << "  -> Marca: " << v->getBrand()
-                          << " | Lote: " << v->getLotNumber()
-                          << " | Validade: " << v->getExpirationDate()
-                          << " | Qtd: " << v->getQuantity() << "\n";
-            }
-            std::cout << "\n"; // Espaço entre categorias
-        }
-    }
-
-    pause();
-}
-
-// ---- UC4 ----
-void uc4_registerEmployee() {
-    clearScreen();
-    std::cout << "========================================\n";
-    std::cout << "   UC4 - Registar Funcionario\n";
+    std::cout << "   UC3 - Registar Funcionario\n";
     std::cout << "========================================\n\n";
 
     std::cout << "Funcoes:\n  1. Enfermeiro\n  2. Rececionista\n";
     int roleChoice = readInt("Selecione a funcao: ", 1, 2);
 
-    std::string id, name, address, phone, email, cc;
-    std::cout << "\nID               : "; std::getline(std::cin, id);
+    std::string name, phone, email, cc;
     std::cout << "Nome             : "; std::getline(std::cin, name);
-    std::cout << "Morada           : "; std::getline(std::cin, address);
     std::cout << "Telefone         : "; std::getline(std::cin, phone);
     std::cout << "Email            : "; std::getline(std::cin, email);
     std::cout << "Cartao Cidadao   : "; std::getline(std::cin, cc);
 
     std::cout << "\n--- Confirmar dados ---\n";
     std::cout << "Funcao   : " << (roleChoice == 1 ? "Enfermeiro" : "Rececionista") << "\n";
-    std::cout << "ID       : " << id      << "\n";
-    std::cout << "Nome     : " << name    << "\n";
-    std::cout << "Morada   : " << address << "\n";
-    std::cout << "Telefone : " << phone   << "\n";
-    std::cout << "Email    : " << email   << "\n";
-    std::cout << "CC       : " << cc      << "\n";
+    std::cout << "Nome     : " << name  << "\n";
+    std::cout << "Telefone : " << phone << "\n";
+    std::cout << "Email    : " << email << "\n";
+    std::cout << "CC       : " << cc    << "\n";
 
     int confirm = readInt("\nConfirma? (1-Sim / 2-Nao): ", 1, 2);
     if (confirm == 1) {
-        // TODO: EmployeeController::register(...)
-        std::cout << "\n[OK] Funcionario registado!\n";
+        std::string role = (roleChoice == 1 ? "Enfermeiro" : "Rececionista");
+        bool success = employeeController.registerEmployee(name, phone, email, cc, role);
+        if (success) {
+            std::cout << "\n[OK] Funcionario registado com sucesso!\n";
+        } else {
+            std::cout << "\n[ERRO] Falha ao registar o funcionario!\n";
+        }
     } else {
         std::cout << "\n[INFO] Operacao cancelada.\n";
     }
     pause();
 }
 
-// ---- UC5 ----
-void uc5_listEmployeesByRole() {
+// ---- UC4 ----
+void uc4_listEmployeesByRole() {
     clearScreen();
     std::cout << "========================================\n";
-    std::cout << "   UC5 - Listar Funcionarios por Funcao\n";
+    std::cout << "   UC4 - Listar Funcionarios por Funcao\n";
     std::cout << "========================================\n\n";
 
     std::cout << "Funcoes:\n  1. Enfermeiro\n  2. Rececionista\n";
-    int roleChoice = readInt("Selecione a funcao: ", 1, 2);
+    int choice = readInt("Selecione a funcao: ", 1, 2);
 
-    std::cout << "\n--- " << (roleChoice == 1 ? "Enfermeiros" : "Rececionistas") << " ---\n";
-    // TODO: obter lista real do repositorio
-    std::cout << "  ID: E001 | Nome: Maria Silva\n";
-    std::cout << "  ID: E002 | Nome: Joao Santos\n";
+    std::string roleChoice = (choice == 1 ? "Enfermeiro" : "Rececionista");
 
+    std::cout << "\n--- " << (choice == 1 ? "Enfermeiros" : "Rececionistas") << " ---\n";
+    std::vector<Employee*> list = employeeController.getEmployeesByRole(roleChoice);
+    if (list.empty()) {
+        std::cout << " [INFO] Nenhum funcionario registado nesta funcao.\n";
+    } else {
+        for (Employee* emp : list) {
+            std::cout << "  -> Nome : " << emp->getName()        << "\n"
+                      << "     Tel  : " << emp->getPhone()       << "\n"
+                      << "     Email: " << emp->getEmail()       << "\n"
+                      << "     CC   : " << emp->getCitizenCard() << "\n";
+            std::cout << "  --------------------------------------\n";
+        }
+        std::cout << " Total: " << list.size() << " funcionario(s) listado(s).\n";
+    }
+    pause();
+}
+
+// ---- UC5 ----
+void uc5_listVaccineStock() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC5 - Listar Stock de Vacinas\n";
+    std::cout << "========================================\n\n";
+
+    std::map<VaccineType*, std::vector<Vaccine*>> stock = vaccineController.getVaccineStockGroupedAndSorted();
+
+    if (stock.empty()) {
+        std::cout << "[INFO] Nao existe stock de vacinas no inventario do Centro.\n";
+    } else {
+        for (const auto& pair : stock) {
+            VaccineType* vt = pair.first;
+            const std::vector<Vaccine*>& vaccines = pair.second;
+
+            std::cout << "Tipo: " << vt->getCode() << " (" << vaccines.size() << " lotes)\n";
+
+            for (Vaccine* v : vaccines) {
+                std::cout << "  -> Marca: "    << v->getBrand()
+                          << " | Lote: "       << v->getLotNumber()
+                          << " | Validade: "   << v->getExpirationDate()
+                          << " | Qtd: "        << v->getQuantity() << "\n";
+            }
+            std::cout << "\n";
+        }
+    }
     pause();
 }
 
@@ -215,23 +218,23 @@ void menuCenterAdministrator() {
     do {
         clearScreen();
         std::cout << "========================================\n";
-        std::cout << "    ADMINISTRADOR DO CENTRO\n";
+        std::cout << "      ADMINISTRADOR DO CENTRO\n";
         std::cout << "========================================\n";
         std::cout << "  1. Criar Tipo de Vacina\n";
         std::cout << "  2. Registar Vacina Fisica\n";
-        std::cout << "  3. Listar Stock de Vacinas\n";
-        std::cout << "  4. Registar Funcionario\n";
-        std::cout << "  5. Listar Funcionarios por Funcao\n";
+        std::cout << "  3. Registar Funcionario\n";
+        std::cout << "  4. Listar Funcionarios por Funcao\n";
+        std::cout << "  5. Listar Stock de Vacinas\n";
         std::cout << "  0. Voltar\n";
         std::cout << "========================================\n";
 
         option = readInt("Opcao: ", 0, 5);
         switch (option) {
-            case 1: uc1_createVaccineType();        break;
-            case 2: uc2_registerPhysicalVaccine();  break;
-            case 3: uc3_listVaccineStock();          break;
-            case 4: uc4_registerEmployee();          break;
-            case 5: uc5_listEmployeesByRole();       break;
+            case 1: uc1_createVaccineType();       break;
+            case 2: uc2_registerPhysicalVaccine(); break;
+            case 3: uc3_registerEmployee();        break;
+            case 4: uc4_listEmployeesByRole();     break;
+            case 5: uc5_listVaccineStock();        break;
         }
     } while (option != 0);
 }
@@ -242,7 +245,7 @@ void mainMenu() {
     do {
         clearScreen();
         std::cout << "========================================\n";
-        std::cout << "        MedManager v1.0\n";
+        std::cout << "          MedManager v1.0\n";
         std::cout << "  Gestao do Centro de Vacinacao\n";
         std::cout << "========================================\n";
         std::cout << "  1. Administrador do Centro\n";
@@ -251,7 +254,7 @@ void mainMenu() {
         std::cout << "  0. Sair\n";
         std::cout << "========================================\n";
 
-        option = readInt("Opcao: ", 0, 4);
+        option = readInt("Opcao: ", 0, 3);
         switch (option) {
             case 1: menuCenterAdministrator(); break;
             case 2: case 3:

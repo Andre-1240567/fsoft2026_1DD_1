@@ -67,4 +67,3 @@ std::map<VaccineType*, std::vector<Vaccine*>> VaccineController::getVaccineStock
 
     return groupedStock;
 }
-
