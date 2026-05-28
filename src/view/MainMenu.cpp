@@ -239,17 +239,54 @@ void menuCenterAdministrator() {
     } while (option != 0);
 }
 
-// ---- Menu Principal ----
-void mainMenu() {
+// ---- Menu Rececionista ----
+void menuReceptionist()
+{
     int option;
     do {
         clearScreen();
         std::cout << "========================================\n";
-        std::cout << "          MedManager v1.0\n";
+        std::cout << "      Rececionista\n";
+        std::cout << "========================================\n";
+        std::cout << "  1. Registar Utente do SNS\n";
+        std::cout << "  2. Agende a administracao da vacina\n";
+        std::cout << "  3. Registo de chegada de utilizador SNS\n";
+        std::cout << "  0. Voltar\n";
+        std::cout << "========================================\n";
+
+        option = readInt("Opcao: ", 0, 3);
+        switch (option) {
+        case 1:
+            std::cout << "\n[INFO] Ainda nao implementado.\n";
+            std::cout << "Pressione ENTER...";
+            std::cin.get(); break;
+        case 2:
+            std::cout << "\n[INFO] Ainda nao implementado.\n";
+            std::cout << "Pressione ENTER...";
+            std::cin.get(); break;
+        case 3:
+            std::cout << "\n[INFO] Ainda nao implementado.\n";
+            std::cout << "Pressione ENTER...";
+            std::cin.get();
+            break;
+        case 0:
+            std::cout << "\nAte logo!\n";
+            break;
+        }
+    }while (option != 0);
+}
+
+// ---- Menu Principal ----
+void mainMenu(){
+    int option;
+    do {
+        clearScreen();
+        std::cout << "========================================\n";
+        std::cout << "          MedManager v1.2\n";
         std::cout << "  Gestao do Centro de Vacinacao\n";
         std::cout << "========================================\n";
         std::cout << "  1. Administrador do Centro\n";
-        std::cout << "  2. Rececionista       [em breve]\n";
+        std::cout << "  2. Rececionista\n";
         std::cout << "  3. Enfermeiro         [em breve]\n";
         std::cout << "  0. Sair\n";
         std::cout << "========================================\n";
@@ -257,7 +294,8 @@ void mainMenu() {
         option = readInt("Opcao: ", 0, 3);
         switch (option) {
             case 1: menuCenterAdministrator(); break;
-            case 2: case 3:
+            case 2: menuReceptionist(); break;;
+            case 3:
                 std::cout << "\n[INFO] Ainda nao implementado.\n";
                 std::cout << "Pressione ENTER...";
                 std::cin.get();
