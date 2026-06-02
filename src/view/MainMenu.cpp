@@ -14,6 +14,8 @@
 static HealthcareCenter globalHC("MedManager Center", "Rua Principal", "912345678", "geral@med.pt");
 static VaccineController vaccineController(&globalHC);
 static EmployeeController employeeController(&globalHC);
+// base de dados // .txt // .txt
+
 
 // ---- UC1 ----
 void uc1_createVaccineType() {
