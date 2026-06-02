@@ -1,0 +1,3 @@
+C:/Projetos/fsoft2026_1DD_1/cmake-build-fsoft2026/CMakeFiles/fsoft2026_1DD_1.dir
+C:/Projetos/fsoft2026_1DD_1/cmake-build-fsoft2026/CMakeFiles/edit_cache.dir
+C:/Projetos/fsoft2026_1DD_1/cmake-build-fsoft2026/CMakeFiles/rebuild_cache.dir

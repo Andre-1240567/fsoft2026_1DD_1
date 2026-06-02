@@ -14,6 +14,8 @@
 static HealthcareCenter globalHC("MedManager Center", "Rua Principal", "912345678", "geral@med.pt");
 static VaccineController vaccineController(&globalHC);
 static EmployeeController employeeController(&globalHC);
+// base de dados // .txt // .txt
+
 
 // ---- UC1 ----
 void uc1_createVaccineType() {
@@ -276,6 +278,37 @@ void menuReceptionist()
     }while (option != 0);
 }
 
+// ---- Menu Enfermeiro ----
+void menuNurse()
+{
+    int option;
+    do {
+        clearScreen();
+        std::cout << "========================================\n";
+        std::cout << "      Enfermeiro\n";
+        std::cout << "========================================\n";
+        std::cout << "  1. Consultar os Utentes do SNS na sala de espera\n";
+        std::cout << "  2. Registo de administracao de vacinas\n";
+        std::cout << "  0. Voltar\n";
+        std::cout << "========================================\n";
+
+        option = readInt("Opcao: ", 0, 3);
+        switch (option) {
+        case 1:
+            std::cout << "\n[INFO] Ainda nao implementado.\n";
+            std::cout << "Pressione ENTER...";
+            std::cin.get(); break;
+        case 2:
+            std::cout << "\n[INFO] Ainda nao implementado.\n";
+            std::cout << "Pressione ENTER...";
+            std::cin.get(); break;
+        case 0:
+            std::cout << "\nAte logo!\n";
+            break;
+        }
+    }while (option != 0);
+}
+
 // ---- Menu Principal ----
 void mainMenu(){
     int option;
@@ -287,22 +320,17 @@ void mainMenu(){
         std::cout << "========================================\n";
         std::cout << "  1. Administrador do Centro\n";
         std::cout << "  2. Rececionista\n";
-        std::cout << "  3. Enfermeiro         [em breve]\n";
+        std::cout << "  3. Enfermeiro\n";
         std::cout << "  0. Sair\n";
         std::cout << "========================================\n";
 
         option = readInt("Opcao: ", 0, 3);
         switch (option) {
             case 1: menuCenterAdministrator(); break;
-            case 2: menuReceptionist(); break;;
-            case 3:
-                std::cout << "\n[INFO] Ainda nao implementado.\n";
-                std::cout << "Pressione ENTER...";
-                std::cin.get();
-                break;
+            case 2: menuReceptionist(); break;
+            case 3: menuNurse(); break;
             case 0:
-                std::cout << "\nAte logo!\n";
-                break;
+                pause();
         }
     } while (option != 0);
 }
