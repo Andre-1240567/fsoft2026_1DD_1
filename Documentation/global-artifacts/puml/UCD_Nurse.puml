@@ -5,9 +5,9 @@ left to right direction
 actor "Nurse" as Nurse
 
 
-    usecase "UC10 - Consult SNS Users in the Waiting Room" as UC10
-    usecase "UC11 - Record vaccine administration" as UC11
+    usecase "UC9 - Consult SNS Users in the Waiting Room" as UC9
+    usecase "UC10 - Record vaccine administration" as UC10
 
+Nurse --> UC9
 Nurse --> UC10
-Nurse --> UC11
 @enduml

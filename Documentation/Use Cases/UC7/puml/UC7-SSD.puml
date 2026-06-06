@@ -1,46 +1,46 @@
-@startuml SSD_ScheduleVaccine_SNSUser
-title SSD: UC7 - Schedule a Vaccine Administration (SNS User)
+@startuml SSD_ScheduleVaccine_Receptionist
+title SSD: UC7 - Schedule a Vaccine Administration (Receptionist)
 
-actor "SNS User" as User
+actor "Receptionist" as Rec
 participant ":System" as System
 
 autonumber
-activate User
+activate Rec
 
-User -> System: starts scheduling a vaccine administration
+Rec -> System: starts scheduling a vaccine administration for an SNS User
 activate System
-System --> User: requests SNS User Number
+System --> Rec: requests SNS User Number
 deactivate System
 
-User -> System: inputs SNS User Number
+Rec -> System: inputs SNS User Number
 activate System
 
 alt user not registered
-    System --> User: informs user not found error
+    System --> Rec: informs user not found error
 else user registered
-    System --> User: shows list of available Vaccine Types
+    System --> Rec: shows list of available Vaccine Types
     deactivate System
 
-    User -> System: selects the desired Vaccine Type
+    Rec -> System: selects the desired Vaccine Type
     activate System
-    System --> User: requests Date and Time for the appointment
+    System --> Rec: requests Date and Time for the appointment
     deactivate System
 
-    User -> System: inputs Date and Time
+    Rec -> System: inputs Date and Time
     activate System
 
-    alt date/time is in the past
-        System --> User: informs invalid date/time error
-    else valid date/time
-        System --> User: displays appointment summary (Center, Date, Time, Vaccine Type) and requests confirmation
+    alt invalid date/time or pending appointment exists
+        System --> Rec: informs scheduling error (e.g., past date or conflict)
+    else valid schedule and no conflicts
+        System --> Rec: displays appointment summary and requests confirmation
         deactivate System
 
-        User -> System: confirms the appointment
+        Rec -> System: confirms the appointment
         activate System
-        System --> User: confirms successful scheduling
+        System --> Rec: confirms successful scheduling
     end
 end
 
 deactivate System
-deactivate User
+deactivate Rec
 @enduml

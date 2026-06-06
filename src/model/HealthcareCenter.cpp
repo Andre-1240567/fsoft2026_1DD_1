@@ -1,11 +1,25 @@
 #include "HealthcareCenter.h"
 #include "VaccineType.h"
 #include "Employee.h"
+#include "Vaccine.h"
+#include "SNSUser.h"
 
 HealthcareCenter::HealthcareCenter(std::string name, std::string address, std::string phone, std::string email)
     : name(name), address(address), phone(phone), email(email) {}
 
 HealthcareCenter::~HealthcareCenter() {
+    for (Employee* emp : employees) {
+        delete emp;
+    }
+    for (VaccineType* vt : vaccineCatalog) {
+        delete vt;
+    }
+    for (Vaccine* v : inventory) {
+        delete v;
+    }
+    for (SNSUser* u : snsUsersRegistry) {
+        delete u;
+    }
 }
 
 bool HealthcareCenter::addVaccineType(VaccineType* vt) {

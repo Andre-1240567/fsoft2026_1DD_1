@@ -23,7 +23,11 @@ bool VaccineController::createVaccineType(
             technology,
             recoveryPeriod);
 
-    return hc->addVaccineType(vt);
+    bool success = hc->addVaccineType(vt);
+    if (!success) {
+        delete vt;
+    }
+    return success;
 }
 
 

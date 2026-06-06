@@ -24,12 +24,12 @@ int readInt(const std::string& prompt, int min, int max) {
         }
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cout << "  [ERRO] Opcao invalida. Introduza um numero entre "
-                  << min << " e " << max << ".\n";
+        std::cout << "  [ERROR] Invalid option. Enter a number between "
+                  << min << " and " << max << ".\n";
     }
 }
 
 void pause() {
-    std::cout << "\nPressione ENTER para continuar...";
+    std::cout << "\nPress ENTER to continue...";
     std::cin.get();
 }

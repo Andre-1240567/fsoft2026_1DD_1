@@ -18,6 +18,7 @@ public:
     std::string getPhone() const;
     std::string getEmail() const;
     std::string getCitizenCard() const;
+    virtual std::string getRole() const = 0;
 
     virtual ~Employee() = default;
 };

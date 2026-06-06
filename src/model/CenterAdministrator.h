@@ -5,6 +5,7 @@
 class CenterAdministrator : public Employee {
 public:
     CenterAdministrator(std::string n, std::string p, std::string e, std::string cc);
+    std::string getRole() const override;
 
 };
 

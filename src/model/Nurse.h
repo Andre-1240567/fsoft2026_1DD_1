@@ -6,6 +6,7 @@
 class Nurse : public Employee {
 public:
     Nurse(std::string n, std::string p, std::string e, std::string cc);
+    std::string getRole() const override;
 };
 
 #endif //FSOFT2026_1DD_1_NURSE_H
