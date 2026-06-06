@@ -1,26 +1,21 @@
-@startuml SSD_RegisterArrival
-title SSD: UC9 - Register Arrival of an SNS User
+@startuml SSD_ConsultWaitingRoom
+title SSD: UC9 - Consult Waiting Room
 
-actor "Receptionist" as Rec
+actor "Nurse" as Nurse
 participant ":System" as System
 
 autonumber
-activate Rec
+activate Nurse
 
-Rec -> System: starts registering the arrival of an SNS user
-activate System
-System --> Rec: requests SNS User Number
-deactivate System
-
-Rec -> System: inputs SNS User Number
+Nurse -> System: requests the list of users in the waiting room
 activate System
 
-alt no appointment for today or user already arrived
-    System --> Rec: informs error (e.g., no appointment scheduled for today or duplicate arrival)
-else valid appointment for today and no prior arrival
-    System --> Rec: confirms successful registration and informs that the user was added to the Waiting Room
+alt waiting room is empty
+    System --> Nurse: displays "Waiting room is currently empty" message
+else waiting room has users
+    System --> Nurse: displays the list of users in FIFO order (SNS Number and Name)
 end
 
 deactivate System
-deactivate Rec
+deactivate Nurse
 @enduml

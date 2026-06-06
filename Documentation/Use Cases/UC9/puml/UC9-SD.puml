@@ -1,68 +1,49 @@
-@startuml SD_RegisterArrival
-title SD: UC9 - Register Arrival of an SNS User
+@startuml SD_ConsultWaitingRoom
+title SD: UC9 - Consult Waiting Room
 skinparam maxMessageSize 150
 
-actor "Receptionist" as Rec
+actor "Nurse" as Nurse
 participant ": MainMenu" as UI
-participant ": ArrivalController" as CTRL
+participant ": WaitingRoomController" as CTRL
 participant ": HealthcareCenter" as HC
-participant "appt: Appointment" as Appt
-participant "arr: Arrival" as Arr
+participant "user: SNSUser" as User
 
 autonumber
 
-activate Rec
-Rec -> UI: starts registering the arrival of an SNS user
+activate Nurse
+Nurse -> UI: requests the list of users in the waiting room
 activate UI
 
-UI --> Rec: requests SNS User Number
-deactivate UI
-
-Rec -> UI: inputs SNS User Number
-activate UI
-
-UI -> CTRL: registerArrival(snsNumber)
+UI -> CTRL: getWaitingRoomList()
 activate CTRL
 
-CTRL -> HC: getTodayAppointment(snsNumber)
+CTRL -> HC: getWaitingRoom()
 activate HC
-HC --> CTRL: returns Appointment* (or null)
+HC --> CTRL: returns vector<SNSUser*>
 deactivate HC
 
-CTRL -> HC: isUserInWaitingRoom(snsNumber)
-activate HC
-HC --> CTRL: returns boolean
-deactivate HC
+CTRL --> UI: returns list of users
+deactivate CTRL
 
-alt no appointment for today OR user already in waiting room
-    CTRL --> UI: returns validation error
-    UI --> Rec: informs error (e.g., no appointment scheduled or duplicate arrival)
-else valid appointment and no prior arrival
+alt waiting room is empty
+    UI --> Nurse: displays "Waiting room is currently empty" message
+else waiting room has users
 
-    CTRL -> HC: getSNSUser(snsNumber)
-    activate HC
-    HC --> CTRL: returns user
-    deactivate HC
+    loop for each user in list (index 0 to N)
+        UI -> User: getSnsNumber()
+        activate User
+        User --> UI: returns snsNumber
+        deactivate User
 
-    CTRL -> Appt: setStatus("WAITING")
-    activate Appt
-    deactivate Appt
+        UI -> User: getName()
+        activate User
+        User --> UI: returns name
+        deactivate User
+    end
 
-    CTRL -> Arr ** : create(currentTime, user, appt)
-
-    CTRL -> HC: addArrivalAndQueueUser(arr, user)
-    activate HC
-    HC -> HC: arrivals.push_back(arr)
-    HC -> HC: waitingRoom.push_back(user)
-    HC --> CTRL: returns true
-    deactivate HC
-
-    CTRL --> UI: returns true
-    deactivate CTRL
-
-    UI --> Rec: confirms successful registration and assignment to Waiting Room
+    UI --> Nurse: displays the list of users in FIFO order (SNS Number and Name)
 end
 
 deactivate UI
-deactivate Rec
+deactivate Nurse
 @enduml

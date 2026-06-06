@@ -19,9 +19,9 @@ bool EmployeeController::registerEmployee(
 
     // ponteiro geral da classe mãe (Employee) inicializado a null
     Employee* newEmp = nullptr;
-    if (role == "Enfermeiro") {
+    if (role == "Nurse") {
         newEmp = new Nurse(name, phone, email, cc);
-    }else if (role == "Rececionista") {
+    }else if (role == "Receptionist") {
         newEmp = new Receptionist(name, phone, email, cc);
     }
 
@@ -46,17 +46,8 @@ std::vector<Employee*> EmployeeController::getEmployeesByRole(std::string role) 
     std::vector<Employee*> allEmployees = hc->getEmployees();
 
     for (Employee* emp : allEmployees) {
-        if (role == "Enfermeiro") {
-            // Se conseguir (não for nullptr), significa que ele é mesmo um Enfermeiro
-            if (dynamic_cast<Nurse*>(emp) != nullptr) {
-                filteredList.push_back(emp);
-            }
-        }
-        else if (role == "Rececionista") {
-            // Tenta converter o Employee* genérico para Receptionist*
-            if (dynamic_cast<Receptionist*>(emp) != nullptr) {
-                filteredList.push_back(emp);
-            }
+        if (emp->getRole() == role) {
+            filteredList.push_back(emp);
         }
     }
 
