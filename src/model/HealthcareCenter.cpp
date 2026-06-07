@@ -39,8 +39,15 @@ std::vector<VaccineType*> HealthcareCenter::getVaccineCatalog() const {
     return vaccineCatalog;
 }
 
-void HealthcareCenter::addVaccineToInventory(Vaccine* vaccine) {
+bool HealthcareCenter::addVaccineToInventory(Vaccine* vaccine) {
+    for (Vaccine* existing : inventory) {
+        if (existing->getBrand() == vaccine->getBrand() && 
+            existing->getLotNumber() == vaccine->getLotNumber()) {
+            return false;
+        }
+    }
     inventory.push_back(vaccine);
+    return true;
 }
 
 std::vector<Vaccine*> HealthcareCenter::getInventory() const {

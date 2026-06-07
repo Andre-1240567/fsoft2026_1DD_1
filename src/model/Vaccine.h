@@ -6,6 +6,7 @@
 
 class Vaccine {
 private:
+    std::string commercialName;
     std::string brand;
     std::string lotNumber;
     std::string expirationDate;
@@ -13,9 +14,10 @@ private:
     VaccineType* type;
 
 public:
-    Vaccine(std::string brand, std::string lotNumber, std::string expirationDate, int quantity, VaccineType* type);
+    Vaccine(std::string commercialName, std::string brand, std::string lotNumber, std::string expirationDate, int quantity, VaccineType* type);
     
     // Getters
+    std::string getCommercialName() const;
     std::string getBrand() const;
     std::string getLotNumber() const;
     std::string getExpirationDate() const;

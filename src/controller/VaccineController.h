@@ -28,6 +28,7 @@ public:
 
     bool registerVaccine(
             int typeIndex,
+            std::string commercialName,
             std::string brand,
             std::string lot,
             std::string expiry,

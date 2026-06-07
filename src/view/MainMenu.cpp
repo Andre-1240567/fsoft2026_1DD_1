@@ -6,6 +6,7 @@
 #include "../controller/VaccineController.h"
 #include "../controller/EmployeeController.h"
 #include "../model/Employee.h"
+#include "../model/FileManager.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -32,12 +33,22 @@ void uc1_createVaccineType() {
 
     // Menu para a Tecnologia
     std::cout << "\nAvailable Technologies:\n";
-    std::cout << "  1. mRNA\n  2. Viral Vector\n  3. Subunit Protein\n";
-    int techChoice = readInt("Select technology: ", 1, 3);
+    std::cout << "  1. mRNA\n"
+              << "  2. Viral Vector\n"
+              << "  3. Subunit Protein\n"
+              << "  4. Toxoid\n"
+              << "  5. Inactivated Virus\n"
+              << "  6. Live-attenuated Virus\n";
+    int techChoice = readInt("Select technology: ", 1, 6);
 
-    if (techChoice == 1) technology = "mRNA";
-    else if (techChoice == 2) technology = "Viral Vector";
-    else technology = "Subunit Protein";
+    switch (techChoice) {
+        case 1: technology = "mRNA"; break;
+        case 2: technology = "Viral Vector"; break;
+        case 3: technology = "Subunit Protein"; break;
+        case 4: technology = "Toxoid"; break;
+        case 5: technology = "Inactivated Virus"; break;
+        case 6: technology = "Live-attenuated Virus"; break;
+    }
 
     recoveryPeriod = readInt("\nRecovery Period (minutes): ", 0, 120);
 
@@ -58,7 +69,7 @@ void uc1_createVaccineType() {
     } else {
         std::cout << "\n[INFO] Operation canceled.\n";
     }
-    pause();
+    pauseConsole();
 }
 
 // ---- UC2 ----
@@ -73,7 +84,7 @@ void uc2_registerPhysicalVaccine() {
     if (catalog.empty()) {
         std::cout << "[WARNING] There are no Vaccine Types registered in the system.\n";
         std::cout << "Please execute UC1 first to populate the catalog.\n";
-        pause();
+        pauseConsole();
         return;
     }
 
@@ -88,16 +99,18 @@ void uc2_registerPhysicalVaccine() {
 
     int realIndex = typeChoice - 1;
 
-    std::string brand, lotNumber, expirationDate;
+    std::string commercialName, brand, lotNumber, expirationDate;
     int quantity;
 
-    std::cout << "\nBrand           : "; std::getline(std::cin, brand);
+    std::cout << "\nCommercial Name : "; std::getline(std::cin, commercialName);
+    std::cout << "Brand           : "; std::getline(std::cin, brand);
     std::cout << "Lot Number      : "; std::getline(std::cin, lotNumber);
-    std::cout << "Expiration Date : "; std::getline(std::cin, expirationDate);
+    expirationDate = readDate("Expiration Date (YYYY-MM-DD): ");
     quantity = readInt("Quantity        : ", 1, 10000);
 
     std::cout << "\n--- Confirm data ---\n";
     std::cout << "Associated Type : " << catalog[realIndex]->getCode() << "\n";
+    std::cout << "Commercial Name : " << commercialName << "\n";
     std::cout << "Brand           : " << brand          << "\n";
     std::cout << "Lot             : " << lotNumber      << "\n";
     std::cout << "Expiration Date : " << expirationDate << "\n";
@@ -105,7 +118,7 @@ void uc2_registerPhysicalVaccine() {
 
     int confirm = readInt("\nConfirm? (1-Yes / 2-No): ", 1, 2);
     if (confirm == 1) {
-        bool success = vaccineController.registerVaccine(realIndex, brand, lotNumber, expirationDate, quantity);
+        bool success = vaccineController.registerVaccine(realIndex, commercialName, brand, lotNumber, expirationDate, quantity);
         if (success) {
             std::cout << "\n[OK] Vaccine lot registered successfully in the inventory!\n";
         } else {
@@ -114,7 +127,7 @@ void uc2_registerPhysicalVaccine() {
     } else {
         std::cout << "\n[INFO] Operation canceled.\n";
     }
-    pause();
+    pauseConsole();
 }
 
 // ---- UC3 ----
@@ -129,9 +142,9 @@ void uc3_registerEmployee() {
 
     std::string name, phone, email, cc;
     std::cout << "Name            : "; std::getline(std::cin, name);
-    std::cout << "Phone           : "; std::getline(std::cin, phone);
-    std::cout << "Email           : "; std::getline(std::cin, email);
-    std::cout << "Citizen Card    : "; std::getline(std::cin, cc);
+    phone = readPhone("Phone           : ");
+    email = readEmail("Email           : ");
+    cc = readCC("Citizen Card    : ");
 
     std::cout << "\n--- Confirm data ---\n";
     std::cout << "Role     : " << (roleChoice == 1 ? "Nurse" : "Receptionist") << "\n";
@@ -152,7 +165,7 @@ void uc3_registerEmployee() {
     } else {
         std::cout << "\n[INFO] Operation canceled.\n";
     }
-    pause();
+    pauseConsole();
 }
 
 // ---- UC4 ----
@@ -181,7 +194,7 @@ void uc4_listEmployeesByRole() {
         }
         std::cout << " Total: " << list.size() << " employee(s) listed.\n";
     }
-    pause();
+    pauseConsole();
 }
 
 // ---- UC5 ----
@@ -203,7 +216,8 @@ void uc5_listVaccineStock() {
             std::cout << "Type: " << vt->getCode() << " (" << vaccines.size() << " lots)\n";
 
             for (Vaccine* v : vaccines) {
-                std::cout << "  -> Brand: "    << v->getBrand()
+                std::cout << "  -> Comm. Name: " << v->getCommercialName()
+                          << " | Brand: " << v->getBrand()
                           << " | Lot: "       << v->getLotNumber()
                           << " | Expiry: "    << v->getExpirationDate()
                           << " | Qty: "       << v->getQuantity() << "\n";
@@ -211,7 +225,7 @@ void uc5_listVaccineStock() {
             std::cout << "\n";
         }
     }
-    pause();
+    pauseConsole();
 }
 
 // ---- Menu Administrator ----
@@ -311,6 +325,9 @@ void menuNurse()
 
 // ---- Main Menu ----
 void mainMenu(){
+    FileManager::loadVaccineTypes(&globalHC, "vaccine_types.txt");
+    FileManager::loadVaccines(&globalHC, "vaccines.txt");
+    FileManager::loadEmployees(&globalHC, "employees.txt");
     int option;
     do {
         clearScreen();
@@ -330,7 +347,7 @@ void mainMenu(){
             case 2: menuReceptionist(); break;
             case 3: menuNurse(); break;
             case 0:
-                pause();
+                pauseConsole();
         }
     } while (option != 0);
 }

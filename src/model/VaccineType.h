@@ -21,6 +21,9 @@ public:
                 int recoveryPeriod);
 
     std::string getCode() const;
+    std::string getDisease() const;
+    std::string getTechnology() const;
+    int getRecoveryPeriod() const;
 };
 
 #endif // FSOFT2026_1DD_1_VACCINETYPE_H

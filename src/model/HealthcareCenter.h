@@ -35,12 +35,12 @@ public:
 
     ~HealthcareCenter();
 
-    bool addVaccineType(VaccineType* vt); // Modified to accept pointer
+    bool addVaccineType(VaccineType* vt);
     bool addEmployee(Employee* emp);
     void registerSNSUser(SNSUser* user);
-    void addVaccineToInventory(Vaccine* vaccine);
+    bool addVaccineToInventory(Vaccine* vaccine);
 
-    std::vector<Employee*> getEmployees() const; //
+    std::vector<Employee*> getEmployees() const;
     std::vector<SNSUser*> getWaitingRoom() const;
     std::vector<VaccineType*> getVaccineCatalog() const;
     std::vector<Vaccine*> getInventory() const;

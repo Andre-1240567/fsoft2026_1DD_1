@@ -2,6 +2,7 @@
 #include "../model/VaccineType.h"
 #include "../model/HealthcareCenter.h"
 #include "../model/Vaccine.h"
+#include "../model/FileManager.h"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -26,6 +27,8 @@ bool VaccineController::createVaccineType(
     bool success = hc->addVaccineType(vt);
     if (!success) {
         delete vt;
+    } else {
+        FileManager::saveVaccineTypes(hc, "vaccine_types.txt");
     }
     return success;
 }
@@ -37,7 +40,7 @@ std::vector<VaccineType*> VaccineController::getVaccineCatalog() {
     return hc->getVaccineCatalog();
 }
 
-bool VaccineController::registerVaccine(int typeIndex, std::string brand, std::string lot, std::string expiry, int qty) {
+bool VaccineController::registerVaccine(int typeIndex, std::string commercialName, std::string brand, std::string lot, std::string expiry, int qty) {
     std::vector<VaccineType*> catalog = hc->getVaccineCatalog();
 
     if (typeIndex < 0 || typeIndex >= catalog.size()) {
@@ -45,9 +48,15 @@ bool VaccineController::registerVaccine(int typeIndex, std::string brand, std::s
     }
 
     VaccineType* selectedType = catalog[typeIndex];
-    Vaccine* v = new Vaccine(brand, lot, expiry, qty, selectedType);
-    hc->addVaccineToInventory(v);
+    Vaccine* v = new Vaccine(commercialName, brand, lot, expiry, qty, selectedType);
+    bool success = hc->addVaccineToInventory(v);
+    
+    if (!success) {
+        delete v;
+        return false;
+    }
 
+    FileManager::saveVaccines(hc, "vaccines.txt");
     return true;
 }
 
