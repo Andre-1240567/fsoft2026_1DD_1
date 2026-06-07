@@ -1,7 +1,9 @@
 #include "Vaccine.h"
 
-Vaccine::Vaccine(std::string brand, std::string lotNumber, std::string expirationDate, int quantity, VaccineType* type)
-    : brand(brand), lotNumber(lotNumber), expirationDate(expirationDate), quantity(quantity), type(type) {}
+Vaccine::Vaccine(std::string commercialName, std::string brand, std::string lotNumber, std::string expirationDate, int quantity, VaccineType* type)
+    : commercialName(commercialName), brand(brand), lotNumber(lotNumber), expirationDate(expirationDate), quantity(quantity), type(type) {}
+
+std::string Vaccine::getCommercialName() const { return commercialName; }
 
 std::string Vaccine::getBrand() const { return brand; }
 

@@ -5,8 +5,10 @@
 #include "EmployeeController.h"
 #include "../model/Employee.h"
 #include "../model/Nurse.h"
-#include "../model/HealthcareCenter.h"
+#include "../model/Nurse.h"
 #include "../model/Receptionist.h"
+#include "../model/CenterAdministrator.h"
+#include "../model/FileManager.h"
 #include <iostream>
 
 // Construtor: guarda a referência do centro de saúde
@@ -23,6 +25,8 @@ bool EmployeeController::registerEmployee(
         newEmp = new Nurse(name, phone, email, cc);
     }else if (role == "Receptionist") {
         newEmp = new Receptionist(name, phone, email, cc);
+    }else if (role == "Center Administrator") {
+        newEmp = new CenterAdministrator(name, phone, email, cc);
     }
 
     if (newEmp == nullptr) {
@@ -33,9 +37,10 @@ bool EmployeeController::registerEmployee(
     bool success = hc->addEmployee(newEmp);
     if (!success) {
         delete newEmp;
-        return false;
+    } else {
+        FileManager::saveEmployees(hc, "employees.txt");
     }
-    return true;
+    return success;
 }
 
 //UC5

@@ -10,3 +10,15 @@ VaccineType::VaccineType(std::string code, std::string disease, std::string tech
 std::string VaccineType::getCode() const {
     return code;
 }
+
+std::string VaccineType::getDisease() const {
+    return disease;
+}
+
+std::string VaccineType::getTechnology() const {
+    return technology;
+}
+
+int VaccineType::getRecoveryPeriod() const {
+    return recoveryPeriod;
+}
