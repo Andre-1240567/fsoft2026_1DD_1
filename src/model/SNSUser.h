@@ -20,6 +20,11 @@ public:
 
     std::string getSnsNumber() const;
     std::string getName() const;
+    std::string getAddress() const;
+    std::string getBirthdate() const;
+    std::string getPhone() const;
+    std::string getSex() const;
+    std::string getCitizenCardNumber() const;
 };
 
 #endif //FSOFT2026_1DD_1_SNSUSER_H

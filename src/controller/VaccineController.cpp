@@ -40,6 +40,10 @@ std::vector<VaccineType*> VaccineController::getVaccineCatalog() {
     return hc->getVaccineCatalog();
 }
 
+std::vector<Vaccine*> VaccineController::getInventory() {
+    return hc->getInventory();
+}
+
 bool VaccineController::registerVaccine(int typeIndex, std::string commercialName, std::string brand, std::string lot, std::string expiry, int qty) {
     std::vector<VaccineType*> catalog = hc->getVaccineCatalog();
 

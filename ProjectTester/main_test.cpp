@@ -1,13 +1,20 @@
 #include <gtest/gtest.h>
 #include <vector>
 #include <map>
+#include <cstdio>
 
 #include "HealthcareCenter.h"
 #include "VaccineController.h"
 #include "EmployeeController.h"
+#include "SNSUserController.h"
+#include "AppointmentController.h"
+#include "NurseController.h"
 #include "VaccineType.h"
 #include "Vaccine.h"
 #include "Employee.h"
+#include "SNSUser.h"
+#include "Appointment.h"
+#include "FileManager.h"
 #include "Utils.h"
 
 // =========================================================================
@@ -206,6 +213,229 @@ TEST(UC5_Tests, EmptyVaccineStock) {
 
     auto grouped = vc.getVaccineStockGroupedAndSorted();
     EXPECT_TRUE(grouped.empty());
+}
+
+// =========================================================================
+// UC6 Tests - Register SNS User
+// =========================================================================
+
+TEST(UC6_Tests, RegisterSNSUserWithMandatoryAndOptionalFields) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+
+    EXPECT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678", "Female"));
+
+    ASSERT_EQ(hc.getSnsUsersRegistry().size(), 1);
+    EXPECT_EQ(hc.getSnsUsersRegistry()[0]->getName(), "Maria");
+    EXPECT_EQ(hc.getSnsUsersRegistry()[0]->getSex(), "Female");
+}
+
+TEST(UC6_Tests, RegisterSNSUserWithoutSex) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+
+    EXPECT_TRUE(sc.registerSNSUser("SNS002", "Joao", "Rua B", "1985-05-05", "912345679", "12345679"));
+
+    ASSERT_EQ(hc.getSnsUsersRegistry().size(), 1);
+    EXPECT_EQ(hc.getSnsUsersRegistry()[0]->getSex(), "N/A");
+}
+
+TEST(UC6_Tests, RejectInvalidOrMissingSNSUserData) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+
+    EXPECT_FALSE(sc.registerSNSUser("", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    EXPECT_FALSE(sc.registerSNSUser("SNS001", "", "Rua A", "1990-01-01", "912345678", "12345678"));
+    EXPECT_FALSE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "123456789", "12345678"));
+    EXPECT_FALSE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "1234567"));
+    EXPECT_FALSE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "01-01-1990", "912345678", "12345678"));
+
+    EXPECT_EQ(hc.getSnsUsersRegistry().size(), 0);
+}
+
+TEST(UC6_Tests, RejectDuplicatePhoneAndSNSNumber) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+
+    EXPECT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+
+    EXPECT_FALSE(sc.registerSNSUser("SNS002", "Ana", "Rua B", "1991-01-01", "912345678", "12345679"));
+    EXPECT_FALSE(sc.registerSNSUser("SNS001", "Pedro", "Rua C", "1992-01-01", "912345679", "12345680"));
+
+    EXPECT_EQ(hc.getSnsUsersRegistry().size(), 1);
+}
+
+TEST(UC6_Tests, PersistSNSUserRegistry) {
+    const std::string filename = "test_sns_users.txt";
+
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUser* user = new SNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678", "Female");
+    ASSERT_TRUE(hc.registerSNSUser(user));
+
+    EXPECT_TRUE(FileManager::saveSNSUserRegistry(&hc, filename));
+
+    HealthcareCenter loaded("Loaded Center", "Addr", "123", "email@test.com");
+    EXPECT_TRUE(FileManager::loadSNSUserRegistry(&loaded, filename));
+
+    ASSERT_EQ(loaded.getSnsUsersRegistry().size(), 1);
+    EXPECT_EQ(loaded.getSnsUsersRegistry()[0]->getSnsNumber(), "SNS001");
+    EXPECT_EQ(loaded.getSnsUsersRegistry()[0]->getPhone(), "912345678");
+
+    std::remove(filename.c_str());
+}
+
+// =========================================================================
+// UC7 Tests - Schedule Vaccine Administration
+// =========================================================================
+
+TEST(UC7_Tests, ScheduleAppointmentForExistingSNSUserAndVaccineType) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+
+    EXPECT_TRUE(ac.createAppointment("SNS001", "COVID", "2026-06-09", "10:30"));
+
+    ASSERT_EQ(hc.getAppointments().size(), 1);
+    EXPECT_EQ(hc.getAppointments()[0]->getUser()->getSnsNumber(), "SNS001");
+    EXPECT_EQ(hc.getAppointments()[0]->getVaccineType()->getCode(), "COVID");
+    EXPECT_EQ(hc.getAppointments()[0]->getStatus(), "SCHEDULED");
+}
+
+TEST(UC7_Tests, RejectUnknownUserUnknownTypeInvalidDateTimeAndDuplicatePendingAppointment) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+
+    EXPECT_FALSE(ac.createAppointment("SNS999", "COVID", "2026-06-09", "10:30"));
+    EXPECT_FALSE(ac.createAppointment("SNS001", "FLU", "2026-06-09", "10:30"));
+    EXPECT_FALSE(ac.createAppointment("SNS001", "COVID", "09-06-2026", "10:30"));
+    EXPECT_FALSE(ac.createAppointment("SNS001", "COVID", "2026-06-09", "25:00"));
+
+    EXPECT_TRUE(ac.createAppointment("SNS001", "COVID", "2026-06-09", "10:30"));
+    EXPECT_FALSE(ac.createAppointment("SNS001", "COVID", "2026-06-10", "11:00"));
+    EXPECT_EQ(hc.getAppointments().size(), 1);
+}
+
+// =========================================================================
+// UC8 Tests - Register SNS User Arrival
+// =========================================================================
+
+TEST(UC8_Tests, RegisterArrivalForTodayMovesUserToWaitingRoom) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+    ASSERT_TRUE(ac.createAppointment("SNS001", "COVID", AppointmentController::currentDate(), "10:30"));
+
+    EXPECT_TRUE(ac.registerArrival("SNS001"));
+
+    ASSERT_EQ(hc.getWaitingRoom().size(), 1);
+    EXPECT_EQ(hc.getWaitingRoom()[0]->getSnsNumber(), "SNS001");
+    EXPECT_EQ(hc.getAppointments()[0]->getStatus(), "WAITING");
+}
+
+TEST(UC8_Tests, RejectDuplicateArrivalAndUsersWithoutAppointmentToday) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(sc.registerSNSUser("SNS002", "Joao", "Rua B", "1985-05-05", "912345679", "12345679"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+    ASSERT_TRUE(ac.createAppointment("SNS001", "COVID", AppointmentController::currentDate(), "10:30"));
+
+    EXPECT_TRUE(ac.registerArrival("SNS001"));
+    EXPECT_FALSE(ac.registerArrival("SNS001"));
+    EXPECT_FALSE(ac.registerArrival("SNS002"));
+    EXPECT_EQ(hc.getWaitingRoom().size(), 1);
+}
+
+// =========================================================================
+// UC9 Tests - Consult Waiting Room
+// =========================================================================
+
+TEST(UC9_Tests, WaitingRoomIsListedInFifoOrder) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    NurseController nc(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(sc.registerSNSUser("SNS002", "Joao", "Rua B", "1985-05-05", "912345679", "12345679"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+    ASSERT_TRUE(ac.createAppointment("SNS001", "COVID", AppointmentController::currentDate(), "10:30"));
+    ASSERT_TRUE(ac.createAppointment("SNS002", "COVID", AppointmentController::currentDate(), "11:00"));
+
+    ASSERT_TRUE(ac.registerArrival("SNS001"));
+    ASSERT_TRUE(ac.registerArrival("SNS002"));
+
+    std::vector<SNSUser*> waiting = nc.getWaitingRoomUsers();
+    ASSERT_EQ(waiting.size(), 2);
+    EXPECT_EQ(waiting[0]->getSnsNumber(), "SNS001");
+    EXPECT_EQ(waiting[1]->getSnsNumber(), "SNS002");
+}
+
+// =========================================================================
+// UC10 Tests - Record Vaccine Administration
+// =========================================================================
+
+TEST(UC10_Tests, RecordAdministrationMovesUserToRecoveryAndUpdatesStockAndAppointment) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    NurseController nc(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+    ASSERT_TRUE(vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 5));
+    ASSERT_TRUE(ac.createAppointment("SNS001", "COVID", AppointmentController::currentDate(), "10:30"));
+    ASSERT_TRUE(ac.registerArrival("SNS001"));
+
+    EXPECT_TRUE(nc.recordAdministration("SNS001", "LOT123"));
+
+    EXPECT_EQ(hc.getWaitingRoom().size(), 0);
+    ASSERT_EQ(hc.getRecoveryRoom().size(), 1);
+    EXPECT_EQ(hc.getRecoveryRoom()[0]->getSnsNumber(), "SNS001");
+    EXPECT_EQ(hc.getInventory()[0]->getQuantity(), 4);
+    EXPECT_EQ(hc.getAppointments()[0]->getStatus(), "ADMINISTERED");
+    EXPECT_FALSE(hc.getAppointments()[0]->getAdministeredAt().empty());
+    EXPECT_EQ(hc.getAppointments()[0]->getAdministeredLotNumber(), "LOT123");
+}
+
+TEST(UC10_Tests, RejectAdministrationForUserNotWaitingOrWrongVaccineType) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    NurseController nc(&hc);
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+    ASSERT_TRUE(vc.createVaccineType("FLU", "Flu", "Viral Vector", 15));
+    ASSERT_TRUE(vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 5));
+    ASSERT_TRUE(vc.registerVaccine(1, "FluShot", "AlphaMed", "LOT999", "2027-12-31", 5));
+    ASSERT_TRUE(ac.createAppointment("SNS001", "COVID", AppointmentController::currentDate(), "10:30"));
+
+    EXPECT_FALSE(nc.recordAdministration("SNS001", "LOT123"));
+
+    ASSERT_TRUE(ac.registerArrival("SNS001"));
+    EXPECT_FALSE(nc.recordAdministration("SNS001", "LOT999"));
+    EXPECT_EQ(hc.getWaitingRoom().size(), 1);
+    EXPECT_EQ(hc.getRecoveryRoom().size(), 0);
 }
 
 // =========================================================================

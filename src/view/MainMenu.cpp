@@ -5,7 +5,11 @@
 #include "../model/Vaccine.h"
 #include "../controller/VaccineController.h"
 #include "../controller/EmployeeController.h"
+#include "../controller/SNSUserController.h"
+#include "../controller/AppointmentController.h"
+#include "../controller/NurseController.h"
 #include "../model/Employee.h"
+#include "../model/SNSUser.h"
 #include "../model/FileManager.h"
 #include <iostream>
 #include <string>
@@ -15,6 +19,9 @@
 static HealthcareCenter globalHC("MedManager Center", "Main Street", "912345678", "general@med.pt");
 static VaccineController vaccineController(&globalHC);
 static EmployeeController employeeController(&globalHC);
+static SNSUserController snsUserController(&globalHC);
+static AppointmentController appointmentController(&globalHC);
+static NurseController nurseController(&globalHC);
 // base de dados // .txt // .txt
 
 
@@ -228,6 +235,232 @@ void uc5_listVaccineStock() {
     pauseConsole();
 }
 
+// ---- UC6 ----
+void uc6_registerSNSUser() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC6 - Register an SNS User\n";
+    std::cout << "========================================\n\n";
+
+    std::string snsNumber, name, address, birthdate, phone, cc, sex;
+
+    std::cout << "Name            : "; std::getline(std::cin, name);
+    std::cout << "Address         : "; std::getline(std::cin, address);
+    phone = readPhone("Phone           : ");
+    std::cout << "SNS User Number : "; std::getline(std::cin, snsNumber);
+    cc = readCC("Citizen Card    : ");
+    birthdate = readDate("Birth Date (YYYY-MM-DD): ");
+
+    std::cout << "\nSex (optional):\n";
+    std::cout << "  1. Male\n"
+              << "  2. Female\n"
+              << "  3. Other\n"
+              << "  4. Not specified\n";
+    int sexChoice = readInt("Select sex: ", 1, 4);
+    switch (sexChoice) {
+        case 1: sex = "Male"; break;
+        case 2: sex = "Female"; break;
+        case 3: sex = "Other"; break;
+        case 4: sex = "N/A"; break;
+    }
+
+    std::cout << "\n--- Confirm data ---\n";
+    std::cout << "Name            : " << name << "\n";
+    std::cout << "Address         : " << address << "\n";
+    std::cout << "Phone           : " << phone << "\n";
+    std::cout << "SNS User Number : " << snsNumber << "\n";
+    std::cout << "Citizen Card    : " << cc << "\n";
+    std::cout << "Birth Date      : " << birthdate << "\n";
+    std::cout << "Sex             : " << sex << "\n";
+
+    int confirm = readInt("\nConfirm? (1-Yes / 2-No): ", 1, 2);
+    if (confirm == 1) {
+        bool success = snsUserController.registerSNSUser(
+            snsNumber, name, address, birthdate, phone, cc, sex
+        );
+        if (success) {
+            std::cout << "\n[OK] SNS user registered successfully!\n";
+        } else {
+            std::cout << "\n[ERROR] Failed to register the SNS user. Check mandatory fields, formats, or duplicate Phone/SNS Number.\n";
+        }
+    } else {
+        std::cout << "\n[INFO] Operation canceled.\n";
+    }
+    pauseConsole();
+}
+
+// ---- UC7 ----
+void uc7_scheduleVaccineAdministration() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC7 - Schedule Vaccine Administration\n";
+    std::cout << "========================================\n\n";
+
+    std::string snsNumber;
+    std::cout << "SNS User Number : "; std::getline(std::cin, snsNumber);
+
+    SNSUser* user = globalHC.findSNSUserByNumber(snsNumber);
+    if (user == nullptr) {
+        std::cout << "\n[ERROR] SNS user not found.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::vector<VaccineType*> catalog = vaccineController.getVaccineCatalog();
+    if (catalog.empty()) {
+        std::cout << "\n[WARNING] There are no Vaccine Types registered in the system.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "\nSNS User: " << user->getName() << "\n\n";
+    std::cout << "Vaccine types available:\n";
+    for (size_t i = 0; i < catalog.size(); ++i) {
+        std::cout << "  " << (i + 1) << ". " << catalog[i]->getCode()
+                  << " - " << catalog[i]->getDisease() << "\n";
+    }
+    std::cout << "  0. Cancel\n";
+
+    int typeChoice = readInt("Select vaccine type: ", 0, catalog.size());
+    if (typeChoice == 0) {
+        std::cout << "\n[INFO] Operation canceled.\n";
+        pauseConsole();
+        return;
+    }
+
+    VaccineType* selectedType = catalog[typeChoice - 1];
+    std::string date = readDate("Appointment Date (YYYY-MM-DD): ");
+    std::string time = readTime("Appointment Time (HH:MM): ");
+
+    std::cout << "\n--- Confirm schedule ---\n";
+    std::cout << "SNS User Number : " << snsNumber << "\n";
+    std::cout << "Name            : " << user->getName() << "\n";
+    std::cout << "Vaccine Type    : " << selectedType->getCode() << "\n";
+    std::cout << "Date            : " << date << "\n";
+    std::cout << "Time            : " << time << "\n";
+
+    int confirm = readInt("\nConfirm? (1-Yes / 2-No): ", 1, 2);
+    if (confirm == 1) {
+        bool success = appointmentController.createAppointment(snsNumber, selectedType->getCode(), date, time);
+        if (success) {
+            std::cout << "\n[OK] Appointment scheduled successfully!\n";
+        } else {
+            std::cout << "\n[ERROR] Failed to schedule. Check duplicates for this SNS user and vaccine type.\n";
+        }
+    } else {
+        std::cout << "\n[INFO] Operation canceled.\n";
+    }
+    pauseConsole();
+}
+
+// ---- UC8 ----
+void uc8_registerSNSUserArrival() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC8 - Register SNS User Arrival\n";
+    std::cout << "========================================\n\n";
+
+    std::string snsNumber;
+    std::cout << "SNS User Number : "; std::getline(std::cin, snsNumber);
+
+    bool success = appointmentController.registerArrival(snsNumber);
+    if (success) {
+        std::cout << "\n[OK] Arrival registered. SNS user moved to the waiting room.\n";
+    } else {
+        std::cout << "\n[ERROR] Could not register arrival. Check if the user exists, has a scheduled appointment today, or is already waiting.\n";
+    }
+    pauseConsole();
+}
+
+// ---- UC9 ----
+void uc9_consultWaitingRoom() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC9 - Waiting Room\n";
+    std::cout << "========================================\n\n";
+
+    std::vector<SNSUser*> waitingUsers = nurseController.getWaitingRoomUsers();
+    if (waitingUsers.empty()) {
+        std::cout << "[INFO] The waiting room is empty.\n";
+    } else {
+        for (size_t i = 0; i < waitingUsers.size(); ++i) {
+            std::cout << "  " << (i + 1) << ". SNS: " << waitingUsers[i]->getSnsNumber()
+                      << " | Name: " << waitingUsers[i]->getName() << "\n";
+        }
+        std::cout << "\nTotal: " << waitingUsers.size() << " user(s) waiting.\n";
+    }
+    pauseConsole();
+}
+
+// ---- UC10 ----
+void uc10_recordVaccineAdministration() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC10 - Record Vaccine Administration\n";
+    std::cout << "========================================\n\n";
+
+    std::vector<SNSUser*> waitingUsers = nurseController.getWaitingRoomUsers();
+    if (waitingUsers.empty()) {
+        std::cout << "[INFO] The waiting room is empty.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "Waiting room users:\n";
+    for (size_t i = 0; i < waitingUsers.size(); ++i) {
+        std::cout << "  " << (i + 1) << ". SNS: " << waitingUsers[i]->getSnsNumber()
+                  << " | Name: " << waitingUsers[i]->getName() << "\n";
+    }
+    int userChoice = readInt("Select SNS user: ", 1, waitingUsers.size());
+    SNSUser* selectedUser = waitingUsers[userChoice - 1];
+
+    std::vector<Vaccine*> inventory = vaccineController.getInventory();
+    std::vector<Vaccine*> availableVaccines;
+    for (Vaccine* vaccine : inventory) {
+        if (vaccine->getQuantity() > 0) {
+            availableVaccines.push_back(vaccine);
+        }
+    }
+
+    if (availableVaccines.empty()) {
+        std::cout << "\n[WARNING] There are no vaccine lots with available quantity.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "\nAvailable vaccine lots:\n";
+    for (size_t i = 0; i < availableVaccines.size(); ++i) {
+        std::cout << "  " << (i + 1) << ". " << availableVaccines[i]->getCommercialName()
+                  << " | Brand: " << availableVaccines[i]->getBrand()
+                  << " | Lot: " << availableVaccines[i]->getLotNumber()
+                  << " | Type: " << availableVaccines[i]->getType()->getCode()
+                  << " | Qty: " << availableVaccines[i]->getQuantity() << "\n";
+    }
+    int vaccineChoice = readInt("Select vaccine lot: ", 1, availableVaccines.size());
+    Vaccine* selectedVaccine = availableVaccines[vaccineChoice - 1];
+
+    std::cout << "\n--- Confirm administration ---\n";
+    std::cout << "SNS User Number : " << selectedUser->getSnsNumber() << "\n";
+    std::cout << "Name            : " << selectedUser->getName() << "\n";
+    std::cout << "Vaccine         : " << selectedVaccine->getCommercialName() << "\n";
+    std::cout << "Lot Number      : " << selectedVaccine->getLotNumber() << "\n";
+
+    int confirm = readInt("\nConfirm? (1-Yes / 2-No): ", 1, 2);
+    if (confirm == 1) {
+        bool success = nurseController.recordAdministration(
+            selectedUser->getSnsNumber(), selectedVaccine->getLotNumber()
+        );
+        if (success) {
+            std::cout << "\n[OK] Administration recorded. SNS user moved to the recovery room.\n";
+        } else {
+            std::cout << "\n[ERROR] Failed to record administration. Check appointment type, waiting room status, or stock.\n";
+        }
+    } else {
+        std::cout << "\n[INFO] Operation canceled.\n";
+    }
+    pauseConsole();
+}
+
 // ---- Menu Administrator ----
 void menuCenterAdministrator() {
     int option;
@@ -273,17 +506,13 @@ void menuReceptionist()
         option = readInt("Option: ", 0, 3);
         switch (option) {
         case 1:
-            std::cout << "\n[INFO] Not implemented yet.\n";
-            std::cout << "Press ENTER...";
-            std::cin.get(); break;
+            uc6_registerSNSUser();
+            break;
         case 2:
-            std::cout << "\n[INFO] Not implemented yet.\n";
-            std::cout << "Press ENTER...";
-            std::cin.get(); break;
+            uc7_scheduleVaccineAdministration();
+            break;
         case 3:
-            std::cout << "\n[INFO] Not implemented yet.\n";
-            std::cout << "Press ENTER...";
-            std::cin.get();
+            uc8_registerSNSUserArrival();
             break;
         case 0:
             std::cout << "\nGoodbye!\n";
@@ -306,16 +535,14 @@ void menuNurse()
         std::cout << "  0. Back\n";
         std::cout << "========================================\n";
 
-        option = readInt("Option: ", 0, 3);
+        option = readInt("Option: ", 0, 2);
         switch (option) {
         case 1:
-            std::cout << "\n[INFO] Not implemented yet.\n";
-            std::cout << "Press ENTER...";
-            std::cin.get(); break;
+            uc9_consultWaitingRoom();
+            break;
         case 2:
-            std::cout << "\n[INFO] Not implemented yet.\n";
-            std::cout << "Press ENTER...";
-            std::cin.get(); break;
+            uc10_recordVaccineAdministration();
+            break;
         case 0:
             std::cout << "\nGoodbye!\n";
             break;
@@ -328,6 +555,8 @@ void mainMenu(){
     FileManager::loadVaccineTypes(&globalHC, "vaccine_types.txt");
     FileManager::loadVaccines(&globalHC, "vaccines.txt");
     FileManager::loadEmployees(&globalHC, "employees.txt");
+    FileManager::loadSNSUserRegistry(&globalHC, "sns_users.txt");
+    FileManager::loadAppointments(&globalHC, "appointments.txt");
     int option;
     do {
         clearScreen();

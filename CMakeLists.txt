@@ -7,10 +7,14 @@ include_directories(src/model src/controller src/view)
 
 set(COMMON_SOURCES
     src/model/Employee.cpp
+    src/model/Appointment.cpp
     src/model/Vaccine.cpp
     src/model/VaccineType.cpp
     src/model/HealthcareCenter.cpp
     src/controller/EmployeeController.cpp
+    src/controller/AppointmentController.cpp
+    src/controller/NurseController.cpp
+    src/controller/SNSUserController.cpp
     src/controller/VaccineController.cpp
     src/model/SNSUser.cpp
     src/model/CenterAdministrator.cpp

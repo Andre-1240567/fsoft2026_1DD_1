@@ -76,6 +76,18 @@ bool isValidDate(const std::string& date) {
     return true;
 }
 
+bool isValidTime(const std::string& time) {
+    if (time.length() != 5 || time[2] != ':') return false;
+    for (int i = 0; i < 5; ++i) {
+        if (i == 2) continue;
+        if (!std::isdigit(time[i])) return false;
+    }
+
+    int hour = std::stoi(time.substr(0, 2));
+    int minute = std::stoi(time.substr(3, 2));
+    return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
+}
+
 std::string readDate(const std::string& prompt) {
     std::string date;
     while (true) {
@@ -104,4 +116,14 @@ std::string readEmail(const std::string& prompt) {
 void pauseConsole() {
     std::cout << "\nPress ENTER to continue...";
     std::cin.get();
+}
+
+std::string readTime(const std::string& prompt) {
+    std::string time;
+    while (true) {
+        std::cout << prompt;
+        std::getline(std::cin, time);
+        if (isValidTime(time)) return time;
+        std::cout << "  [ERROR] Invalid time format. Must be HH:MM.\n";
+    }
 }

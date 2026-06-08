@@ -14,6 +14,10 @@ public:
     static bool loadVaccines(HealthcareCenter* hc, const std::string& filename);
     static bool saveEmployees(HealthcareCenter* hc, const std::string& filename);
     static bool loadEmployees(HealthcareCenter* hc, const std::string& filename);
+    static bool saveSNSUserRegistry(HealthcareCenter* hc, const std::string& filename);
+    static bool loadSNSUserRegistry(HealthcareCenter* hc, const std::string& filename);
+    static bool saveAppointments(HealthcareCenter* hc, const std::string& filename);
+    static bool loadAppointments(HealthcareCenter* hc, const std::string& filename);
 };
 
 #endif //FSOFT2026_1DD_1_FILEMANAGER_H
