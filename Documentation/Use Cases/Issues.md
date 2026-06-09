@@ -195,3 +195,29 @@ As a Nurse, I want to record the administration of a vaccine to an SNS user so t
 - `VaccineLot`
 - `Appointment`
 - `HealthcareCenter` (Recovery Room container)
+
+---
+
+# US11 - Export Healthcare Center Reports
+
+## Description
+As a Center Administrator, I want to export system data (vaccine stock, employees list, SNS users, and appointments) into structured documents (like CSV files) so that the data can be printed, audited, or analyzed externally.
+
+## Acceptance Criteria
+- [ ] Prompt the Administrator to select which list to export (e.g., Employees, Inventory, SNS Users, Master Schedule).
+- [ ] Generate a structured file (CSV or TXT) named appropriately (e.g., `report_employees.csv`).
+- [ ] The generated file must be properly delimited and easy to read.
+- [ ] If a list is empty, inform the user and do not generate an empty file.
+- [ ] Display a confirmation message with the absolute or relative path where the file was saved.
+
+## Technical Notes
+- **File Format:** CSV format is recommended to allow seamless integration with spreadsheet software (like Microsoft Excel).
+- **Separation of Concerns:** Create a dedicated `ExportController` to fetch data from the `HealthcareCenter` and handle file creation independently from UI operations.
+
+## Domain Entities Involved
+- `CenterAdministrator`
+- `HealthcareCenter`
+- `Employee`
+- `Vaccine`
+- `SNSUser`
+- `Appointment`

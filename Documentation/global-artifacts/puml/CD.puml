@@ -47,6 +47,10 @@ class WaitingRoomController {
     + getWaitingRoomList(): vector<SNSUser*>
 }
 
+class ExportController {
+    + exportReport(listType: string): bool
+}
+
 class HealthcareCenter {
     - name: string
     - address: string
@@ -130,6 +134,7 @@ MainMenu -down..> AppointmentController : uses >
 MainMenu -down..> ArrivalController : uses >
 MainMenu -down..> VaccinationController : uses >
 MainMenu -down..> WaitingRoomController : uses >
+MainMenu -down..> ExportController : uses >
 
 VaccineController -down-> "1" HealthcareCenter : updates >
 EmployeeController -down-> "1" HealthcareCenter : updates >
@@ -138,6 +143,7 @@ AppointmentController -down-> "1" HealthcareCenter : updates >
 ArrivalController -down-> "1" HealthcareCenter : updates >
 VaccinationController -down-> "1" HealthcareCenter : updates >
 WaitingRoomController -down-> "1" HealthcareCenter : reads >
+ExportController -down-> "1" HealthcareCenter : reads >
 
 HealthcareCenter "1" o-down- "0..*" Employee : employs >
 HealthcareCenter "1" o-down- "0..*" VaccineType : catalog >
