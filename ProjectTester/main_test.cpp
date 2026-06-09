@@ -16,6 +16,8 @@
 #include "Appointment.h"
 #include "FileManager.h"
 #include "Utils.h"
+#include "ExportController.h"
+#include <fstream>
 
 // =========================================================================
 // UC1 Tests - Specify Vaccine Type
@@ -436,6 +438,219 @@ TEST(UC10_Tests, RejectAdministrationForUserNotWaitingOrWrongVaccineType) {
     EXPECT_FALSE(nc.recordAdministration("SNS001", "LOT999"));
     EXPECT_EQ(hc.getWaitingRoom().size(), 1);
     EXPECT_EQ(hc.getRecoveryRoom().size(), 0);
+}
+
+// =========================================================================
+// UC11 Tests - Export Healthcare Center Reports
+// =========================================================================
+
+TEST(UC11_Tests, ExportEmployeesCreatesFile) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    EmployeeController ec(&hc);
+    ExportController xc(&hc);
+
+    ec.registerEmployee("John", "910000001", "john@med.pt", "CC001", "Nurse");
+    ec.registerEmployee("Jane", "910000002", "jane@med.pt", "CC002", "Receptionist");
+
+    EXPECT_TRUE(xc.exportEmployees("test_report_employees.csv"));
+
+    std::ifstream file("test_report_employees.csv");
+    EXPECT_TRUE(file.is_open());
+    file.close();
+
+    std::remove("test_report_employees.csv");
+}
+
+TEST(UC11_Tests, ExportEmployeesFileHasCorrectContent) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    EmployeeController ec(&hc);
+    ExportController xc(&hc);
+
+    ec.registerEmployee("John", "910000001", "john@med.pt", "CC001", "Nurse");
+
+    EXPECT_TRUE(xc.exportEmployees("test_report_employees.csv"));
+
+    std::ifstream file("test_report_employees.csv");
+    std::string header, line;
+    std::getline(file, header);
+    std::getline(file, line);
+    file.close();
+
+    EXPECT_EQ(header, "Name;Phone;Email;CitizenCard;Role");
+    EXPECT_NE(line.find("John"), std::string::npos);
+    EXPECT_NE(line.find("910000001"), std::string::npos);
+    EXPECT_NE(line.find("Nurse"), std::string::npos);
+
+    std::remove("test_report_employees.csv");
+}
+
+TEST(UC11_Tests, ExportEmployeesReturnsFalseWhenEmpty) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    ExportController xc(&hc);
+
+    EXPECT_FALSE(xc.exportEmployees("test_report_employees.csv"));
+
+    std::ifstream file("test_report_employees.csv");
+    EXPECT_FALSE(file.is_open());
+}
+
+TEST(UC11_Tests, ExportInventoryCreatesFile) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    VaccineController vc(&hc);
+    ExportController xc(&hc);
+
+    vc.createVaccineType("V-001", "COVID-19", "mRNA", 30);
+    vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 500);
+
+    EXPECT_TRUE(xc.exportInventory("test_report_inventory.csv"));
+
+    std::ifstream file("test_report_inventory.csv");
+    EXPECT_TRUE(file.is_open());
+    file.close();
+
+    std::remove("test_report_inventory.csv");
+}
+
+TEST(UC11_Tests, ExportInventoryFileHasCorrectContent) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    VaccineController vc(&hc);
+    ExportController xc(&hc);
+
+    vc.createVaccineType("V-001", "COVID-19", "mRNA", 30);
+    vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 500);
+
+    EXPECT_TRUE(xc.exportInventory("test_report_inventory.csv"));
+
+    std::ifstream file("test_report_inventory.csv");
+    std::string header, line;
+    std::getline(file, header);
+    std::getline(file, line);
+    file.close();
+
+    EXPECT_EQ(header, "CommercialName;Brand;LotNumber;ExpirationDate;Quantity;VaccineType");
+    EXPECT_NE(line.find("Comirnaty"), std::string::npos);
+    EXPECT_NE(line.find("Pfizer"), std::string::npos);
+    EXPECT_NE(line.find("LOT123"), std::string::npos);
+    EXPECT_NE(line.find("V-001"), std::string::npos);
+
+    std::remove("test_report_inventory.csv");
+}
+
+TEST(UC11_Tests, ExportInventoryReturnsFalseWhenEmpty) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    ExportController xc(&hc);
+
+    EXPECT_FALSE(xc.exportInventory("test_report_inventory.csv"));
+
+    std::ifstream file("test_report_inventory.csv");
+    EXPECT_FALSE(file.is_open());
+}
+
+TEST(UC11_Tests, ExportSNSUsersCreatesFile) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    ExportController xc(&hc);
+
+    sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678", "Female");
+
+    EXPECT_TRUE(xc.exportSNSUsers("test_report_sns_users.csv"));
+
+    std::ifstream file("test_report_sns_users.csv");
+    EXPECT_TRUE(file.is_open());
+    file.close();
+
+    std::remove("test_report_sns_users.csv");
+}
+
+TEST(UC11_Tests, ExportSNSUsersFileHasCorrectContent) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    ExportController xc(&hc);
+
+    sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678", "Female");
+
+    EXPECT_TRUE(xc.exportSNSUsers("test_report_sns_users.csv"));
+
+    std::ifstream file("test_report_sns_users.csv");
+    std::string header, line;
+    std::getline(file, header);
+    std::getline(file, line);
+    file.close();
+
+    EXPECT_EQ(header, "SNSNumber;Name;Address;Birthdate;Phone;CitizenCard;Sex");
+    EXPECT_NE(line.find("SNS001"), std::string::npos);
+    EXPECT_NE(line.find("Maria"), std::string::npos);
+    EXPECT_NE(line.find("Female"), std::string::npos);
+
+    std::remove("test_report_sns_users.csv");
+}
+
+TEST(UC11_Tests, ExportSNSUsersReturnsFalseWhenEmpty) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    ExportController xc(&hc);
+
+    EXPECT_FALSE(xc.exportSNSUsers("test_report_sns_users.csv"));
+
+    std::ifstream file("test_report_sns_users.csv");
+    EXPECT_FALSE(file.is_open());
+}
+
+TEST(UC11_Tests, ExportAppointmentsCreatesFile) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    ExportController xc(&hc);
+
+    sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678");
+    vc.createVaccineType("COVID", "COVID-19", "mRNA", 30);
+    ac.createAppointment("SNS001", "COVID", "2026-06-09", "10:30");
+
+    EXPECT_TRUE(xc.exportAppointments("test_report_appointments.csv"));
+
+    std::ifstream file("test_report_appointments.csv");
+    EXPECT_TRUE(file.is_open());
+    file.close();
+
+    std::remove("test_report_appointments.csv");
+}
+
+TEST(UC11_Tests, ExportAppointmentsFileHasCorrectContent) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    ExportController xc(&hc);
+
+    sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678");
+    vc.createVaccineType("COVID", "COVID-19", "mRNA", 30);
+    ac.createAppointment("SNS001", "COVID", "2026-06-09", "10:30");
+
+    EXPECT_TRUE(xc.exportAppointments("test_report_appointments.csv"));
+
+    std::ifstream file("test_report_appointments.csv");
+    std::string header, line;
+    std::getline(file, header);
+    std::getline(file, line);
+    file.close();
+
+    EXPECT_EQ(header, "DateTime;SNSNumber;UserName;VaccineType;Status");
+    EXPECT_NE(line.find("SNS001"), std::string::npos);
+    EXPECT_NE(line.find("Maria"), std::string::npos);
+    EXPECT_NE(line.find("COVID"), std::string::npos);
+    EXPECT_NE(line.find("SCHEDULED"), std::string::npos);
+
+    std::remove("test_report_appointments.csv");
+}
+
+TEST(UC11_Tests, ExportAppointmentsReturnsFalseWhenEmpty) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    ExportController xc(&hc);
+
+    EXPECT_FALSE(xc.exportAppointments("test_report_appointments.csv"));
+
+    std::ifstream file("test_report_appointments.csv");
+    EXPECT_FALSE(file.is_open());
 }
 
 // =========================================================================
