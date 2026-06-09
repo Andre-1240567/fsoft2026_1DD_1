@@ -23,6 +23,7 @@ public:
     std::string getExpirationDate() const;
     int getQuantity() const;
     VaccineType* getType() const;
+    bool decreaseQuantity(int amount = 1);
 };
 
 #endif

@@ -14,3 +14,12 @@ std::string Vaccine::getExpirationDate() const { return expirationDate; }
 int Vaccine::getQuantity() const { return quantity; }
 
 VaccineType* Vaccine::getType() const { return type; }
+
+bool Vaccine::decreaseQuantity(int amount) {
+    if (amount <= 0 || quantity < amount) {
+        return false;
+    }
+
+    quantity -= amount;
+    return true;
+}
