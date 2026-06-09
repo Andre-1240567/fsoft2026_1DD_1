@@ -1,0 +1,23 @@
+@startuml SSD_ExportReports
+title SSD: UC11 - Export Healthcare Center Reports
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+
+activate Admin
+Admin -> System: asks to export a Healthcare Center report
+activate System
+
+System --> Admin: asks which list to export (Employees, Inventory, SNS Users, Master Schedule)
+deactivate System
+
+Admin -> System: selects the desired list
+activate System
+
+System --> Admin: generates the report (CSV) and displays a success message with file path
+deactivate System
+deactivate Admin
+
+@enduml

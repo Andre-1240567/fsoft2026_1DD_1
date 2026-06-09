@@ -1,0 +1,58 @@
+@startuml SD_ExportReports
+title SD: UC11 - Export Healthcare Center Reports
+skinparam maxMessageSize 150
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant ": ExportController" as CTRL
+participant ": HealthcareCenter" as HC
+
+autonumber
+
+activate Admin
+Admin -> UI: asks to export a Healthcare Center report
+activate UI
+
+UI --> Admin: asks which list to export (Employees, Inventory, SNS Users, Master Schedule)
+deactivate UI
+
+Admin -> UI: selects the desired list
+activate UI
+
+UI -> CTRL: exportReport(listType)
+activate CTRL
+
+alt listType == Employees
+    CTRL -> HC: getEmployees()
+    activate HC
+    HC --> CTRL: list
+    deactivate HC
+    CTRL -> CTRL: generateEmployeesCSV(list)
+else listType == Inventory
+    CTRL -> HC: getInventory()
+    activate HC
+    HC --> CTRL: list
+    deactivate HC
+    CTRL -> CTRL: generateInventoryCSV(list)
+else listType == SNS Users
+    CTRL -> HC: getSnsUsersRegistry()
+    activate HC
+    HC --> CTRL: list
+    deactivate HC
+    CTRL -> CTRL: generateSNSUsersCSV(list)
+else listType == Master Schedule
+    CTRL -> HC: getAppointments()
+    activate HC
+    HC --> CTRL: list
+    deactivate HC
+    CTRL -> CTRL: generateAppointmentsCSV(list)
+end
+
+CTRL --> UI: returns true (success / file path)
+deactivate CTRL
+
+UI --> Admin: generates the report (CSV) and displays a success message with file path
+deactivate UI
+deactivate Admin
+
+@enduml
