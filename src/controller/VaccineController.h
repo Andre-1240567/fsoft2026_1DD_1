@@ -25,6 +25,7 @@ public:
 
     // UC2
     std::vector<VaccineType*> getVaccineCatalog();
+    std::vector<Vaccine*> getInventory();
 
     bool registerVaccine(
             int typeIndex,
