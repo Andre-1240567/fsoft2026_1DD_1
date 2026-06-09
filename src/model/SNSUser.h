@@ -19,7 +19,8 @@ public:
             std::string sex = "N/A");
 
     std::string getSnsNumber() const;
-    std::string getName() const;
+
+  std::string getName() const;
     std::string getAddress() const;
     std::string getBirthdate() const;
     std::string getPhone() const;
