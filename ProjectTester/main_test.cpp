@@ -654,6 +654,33 @@ TEST(UC11_Tests, ExportAppointmentsReturnsFalseWhenEmpty) {
 }
 
 // =========================================================================
+// UC12 Tests - Consult Recovery Room
+// =========================================================================
+
+TEST(UC12_Tests, ConsultRecoveryRoom) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    NurseController nc(&hc);
+
+    // Initial state: empty recovery room
+    EXPECT_TRUE(nc.getRecoveryRoomUsers().empty());
+
+    ASSERT_TRUE(sc.registerSNSUser("SNS001", "Maria", "Rua A", "1990-01-01", "912345678", "12345678"));
+    ASSERT_TRUE(vc.createVaccineType("COVID", "COVID-19", "mRNA", 30));
+    ASSERT_TRUE(vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 5));
+    ASSERT_TRUE(ac.createAppointment("SNS001", "COVID", AppointmentController::currentDate(), "10:30"));
+    ASSERT_TRUE(ac.registerArrival("SNS001"));
+    ASSERT_TRUE(nc.recordAdministration("SNS001", "LOT123"));
+
+    // Final state: 1 user in recovery room
+    std::vector<SNSUser*> recoveryUsers = nc.getRecoveryRoomUsers();
+    ASSERT_EQ(recoveryUsers.size(), 1);
+    EXPECT_EQ(recoveryUsers[0]->getSnsNumber(), "SNS001");
+}
+
+// =========================================================================
 // Utils Tests - Formatting and Validations
 // =========================================================================
 
