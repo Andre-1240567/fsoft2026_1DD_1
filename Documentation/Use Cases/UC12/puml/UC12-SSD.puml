@@ -1,0 +1,21 @@
+@startuml SSD_ConsultRecoveryRoom
+title SSD: UC12 - Consult Recovery Room
+
+actor "Nurse" as Nurse
+participant ":System" as System
+
+autonumber
+activate Nurse
+
+Nurse -> System: requests the list of users in the recovery room
+activate System
+
+alt recovery room is empty
+    System --> Nurse: displays "The recovery room is empty" message
+else recovery room has users
+    System --> Nurse: displays the list of users in FIFO order (SNS Number and Name)
+end
+
+deactivate System
+deactivate Nurse
+@enduml

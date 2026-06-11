@@ -1,0 +1,49 @@
+@startuml SD_ConsultRecoveryRoom
+title SD: UC12 - Consult Recovery Room
+skinparam maxMessageSize 150
+
+actor "Nurse" as Nurse
+participant ": MainMenu" as UI
+participant ": NurseController" as CTRL
+participant ": HealthcareCenter" as HC
+participant "user: SNSUser" as User
+
+autonumber
+
+activate Nurse
+Nurse -> UI: requests the list of users in the recovery room
+activate UI
+
+UI -> CTRL: getRecoveryRoomUsers()
+activate CTRL
+
+CTRL -> HC: getRecoveryRoom()
+activate HC
+HC --> CTRL: returns vector<SNSUser*>
+deactivate HC
+
+CTRL --> UI: returns list of users
+deactivate CTRL
+
+alt recovery room is empty
+    UI --> Nurse: displays "The recovery room is empty" message
+else recovery room has users
+
+    loop for each user in list (index 0 to N)
+        UI -> User: getSnsNumber()
+        activate User
+        User --> UI: returns snsNumber
+        deactivate User
+
+        UI -> User: getName()
+        activate User
+        User --> UI: returns name
+        deactivate User
+    end
+
+    UI --> Nurse: displays the list of users in FIFO order (SNS Number and Name)
+end
+
+deactivate UI
+deactivate Nurse
+@enduml

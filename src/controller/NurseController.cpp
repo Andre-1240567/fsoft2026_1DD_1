@@ -11,6 +11,10 @@ std::vector<SNSUser*> NurseController::getWaitingRoomUsers() {
     return hc->getWaitingRoom();
 }
 
+std::vector<SNSUser*> NurseController::getRecoveryRoomUsers() {
+    return hc->getRecoveryRoom();
+}
+
 bool NurseController::recordAdministration(const std::string& snsNumber, const std::string& lotNumber) {
     Vaccine* vaccine = hc->findVaccineByLotNumber(lotNumber);
     bool success = hc->recordAdministration(snsNumber, vaccine, currentTimestamp());
