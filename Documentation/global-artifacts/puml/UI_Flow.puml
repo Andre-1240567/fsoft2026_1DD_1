@@ -1,0 +1,39 @@
+@startuml
+title User Interface Flow - MedManager
+
+state MainMenu {
+  state "Center Administrator" as CA
+  state "Receptionist" as REC
+  state "Nurse" as NUR
+}
+
+state "Admin Menu" as AdminMenu {
+  state "UC1 - Specify Vaccine Type" as UC1
+  state "UC2 - Register a Vaccine" as UC2
+  state "UC3 - Register an Employee" as UC3
+  state "UC4 - List Employees by Role" as UC4
+  state "UC5 - List All Vaccines" as UC5
+  state "UC11 - Export Reports" as UC11
+}
+
+state "Receptionist Menu" as RecMenu {
+  state "UC6 - Register SNS User" as UC6
+  state "UC7 - Schedule Vaccine" as UC7
+  state "UC8 - Register Arrival" as UC8
+}
+
+state "Nurse Menu" as NurMenu {
+  state "UC9 - Consult Waiting Room" as UC9
+  state "UC10 - Record Administration" as UC10
+  state "UC12 - Consult Recovery Room" as UC12
+}
+
+[*] --> MainMenu
+CA --> AdminMenu : Login (admin / CC)
+REC --> RecMenu : Login (CC)
+NUR --> NurMenu : Login (CC)
+
+AdminMenu --> MainMenu : 0. Back
+RecMenu --> MainMenu : 0. Back
+NurMenu --> MainMenu : 0. Back
+@enduml

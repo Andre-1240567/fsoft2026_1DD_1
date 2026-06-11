@@ -221,3 +221,25 @@ As a Center Administrator, I want to export system data (vaccine stock, employee
 - `Vaccine`
 - `SNSUser`
 - `Appointment`
+
+---
+
+# US12 - Consult Recovery Room
+
+## Description
+As a Nurse, I want to consult the list of SNS Users currently in the Recovery Room, so that I can monitor them after the vaccine administration.
+
+## Acceptance Criteria
+- [ ] Display the list of SNS Users in the Recovery Room.
+- [ ] Users must be listed in a First-Come, First-Served (FIFO) order.
+- [ ] Show the SNS Number and Name of each user.
+- [ ] If the recovery room is empty, display an appropriate message.
+
+## Technical Notes
+- **Separation of Concerns:** Add a `getRecoveryRoomUsers()` method in `NurseController` that fetches the list from the `HealthcareCenter`.
+- **UI:** Similar to UC9 (Waiting Room), but fetching from the recovery room list.
+
+## Domain Entities Involved
+- `Nurse`
+- `HealthcareCenter`
+- `SNSUser`

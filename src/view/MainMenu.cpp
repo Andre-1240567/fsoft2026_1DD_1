@@ -394,6 +394,26 @@ void uc9_consultWaitingRoom() {
     pauseConsole();
 }
 
+// ---- UC12 ----
+void uc12_consultRecoveryRoom() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC12 - Recovery Room\n";
+    std::cout << "========================================\n\n";
+
+    std::vector<SNSUser*> recoveryUsers = nurseController.getRecoveryRoomUsers();
+    if (recoveryUsers.empty()) {
+        std::cout << "[INFO] The recovery room is empty.\n";
+    } else {
+        for (size_t i = 0; i < recoveryUsers.size(); ++i) {
+            std::cout << "  " << (i + 1) << ". SNS: " << recoveryUsers[i]->getSnsNumber()
+                      << " | Name: " << recoveryUsers[i]->getName() << "\n";
+        }
+        std::cout << "\nTotal: " << recoveryUsers.size() << " user(s) in recovery.\n";
+    }
+    pauseConsole();
+}
+
 // ---- UC10 ----
 void uc10_recordVaccineAdministration() {
     clearScreen();
@@ -583,16 +603,20 @@ void menuNurse()
         std::cout << "========================================\n";
         std::cout << "  1. [UC9] Consult SNS Users in the Waiting Room\n";
         std::cout << "  2. [UC10] Record vaccine administration\n";
+        std::cout << "  3. [UC12] Consult SNS Users in the Recovery Room\n";
         std::cout << "  0. Back\n";
         std::cout << "========================================\n";
 
-        option = readInt("Option: ", 0, 2);
+        option = readInt("Option: ", 0, 3);
         switch (option) {
         case 1:
             uc9_consultWaitingRoom();
             break;
         case 2:
             uc10_recordVaccineAdministration();
+            break;
+        case 3:
+            uc12_consultRecoveryRoom();
             break;
         case 0:
             std::cout << "\nGoodbye!\n";
@@ -622,12 +646,65 @@ void mainMenu(){
         std::cout << "========================================\n";
 
         option = readInt("Option: ", 0, 3);
+        
+        bool authenticated = false;
+        if (option == 1) {
+            std::string cc;
+            std::cout << "Login (Citizen Card / 'admin' / '0' to cancel): ";
+            std::getline(std::cin, cc);
+            if (cc == "0") continue;
+            if (cc == "admin") authenticated = true;
+            else {
+                for (Employee* emp : globalHC.getEmployees()) {
+                    if (emp->getCitizenCard() == cc && emp->getRole() == "Center Administrator") {
+                        authenticated = true; break;
+                    }
+                }
+                if (!authenticated) {
+                    std::cout << "\n[ERROR] Authentication failed for Administrator.\n";
+                    pauseConsole();
+                    continue;
+                }
+            }
+        } else if (option == 2) {
+            std::string cc;
+            std::cout << "Login (Citizen Card / '0' to cancel): ";
+            std::getline(std::cin, cc);
+            if (cc == "0") continue;
+            for (Employee* emp : globalHC.getEmployees()) {
+                if (emp->getCitizenCard() == cc && emp->getRole() == "Receptionist") {
+                    authenticated = true; break;
+                }
+            }
+            if (!authenticated) {
+                std::cout << "\n[ERROR] Authentication failed for Receptionist.\n";
+                pauseConsole();
+                continue;
+            }
+        } else if (option == 3) {
+            std::string cc;
+            std::cout << "Login (Citizen Card / '0' to cancel): ";
+            std::getline(std::cin, cc);
+            if (cc == "0") continue;
+            for (Employee* emp : globalHC.getEmployees()) {
+                if (emp->getCitizenCard() == cc && emp->getRole() == "Nurse") {
+                    authenticated = true; break;
+                }
+            }
+            if (!authenticated) {
+                std::cout << "\n[ERROR] Authentication failed for Nurse.\n";
+                pauseConsole();
+                continue;
+            }
+        }
+
         switch (option) {
             case 1: menuCenterAdministrator(); break;
             case 2: menuReceptionist(); break;
             case 3: menuNurse(); break;
             case 0:
-                pauseConsole();
+                std::cout << "\nGoodbye!\n";
+                break;
         }
     } while (option != 0);
 }
