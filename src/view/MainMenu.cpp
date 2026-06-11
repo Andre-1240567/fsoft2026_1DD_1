@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../controller/ExportController.h"
 
 // Instâncias globais estáticas para a UI conseguir comunicar com a lógica do sistema
 static HealthcareCenter globalHC("MedManager Center", "Main Street", "912345678", "general@med.pt");
@@ -22,6 +23,7 @@ static EmployeeController employeeController(&globalHC);
 static SNSUserController snsUserController(&globalHC);
 static AppointmentController appointmentController(&globalHC);
 static NurseController nurseController(&globalHC);
+static ExportController exportController(&globalHC);
 // base de dados // .txt // .txt
 
 
@@ -461,6 +463,53 @@ void uc10_recordVaccineAdministration() {
     pauseConsole();
 }
 
+// ---- UC11 ----
+void uc11_exportReports() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC11 - Export Reports\n";
+    std::cout << "========================================\n\n";
+
+    std::cout << "Select data to export:\n";
+    std::cout << "  1. Employees List\n";
+    std::cout << "  2. Vaccine Inventory\n";
+    std::cout << "  3. SNS Users\n";
+    std::cout << "  4. Appointments (Master Schedule)\n";
+    std::cout << "  0. Cancel\n";
+
+    int choice = readInt("Option: ", 0, 4);
+    if (choice == 0) return;
+
+    bool success = false;
+    std::string filename;
+
+    switch (choice) {
+        case 1:
+            filename = "report_employees.csv";
+            success  = exportController.exportEmployees(filename);
+            break;
+        case 2:
+            filename = "report_inventory.csv";
+            success  = exportController.exportInventory(filename);
+            break;
+        case 3:
+            filename = "report_sns_users.csv";
+            success  = exportController.exportSNSUsers(filename);
+            break;
+        case 4:
+            filename = "report_appointments.csv";
+            success  = exportController.exportAppointments(filename);
+            break;
+    }
+
+    if (success) {
+        std::cout << "\n[OK] Report saved to: " << filename << "\n";
+    } else {
+        std::cout << "\n[WARNING] No data available to export. File not created.\n";
+    }
+    pauseConsole();
+}
+
 // ---- Menu Administrator ----
 void menuCenterAdministrator() {
     int option;
@@ -474,16 +523,18 @@ void menuCenterAdministrator() {
         std::cout << "  3. [UC3] Register an Employee\n";
         std::cout << "  4. [UC4] List Employees by Role\n";
         std::cout << "  5. [UC5] List All Vaccines\n";
+        std::cout << "  6. [UC11] Export Reports\n";
         std::cout << "  0. Back\n";
         std::cout << "========================================\n";
 
-        option = readInt("Option: ", 0, 5);
+        option = readInt("Option: ", 0, 6);
         switch (option) {
             case 1: uc1_createVaccineType();       break;
             case 2: uc2_registerPhysicalVaccine(); break;
             case 3: uc3_registerEmployee();        break;
             case 4: uc4_listEmployeesByRole();     break;
             case 5: uc5_listVaccineStock();        break;
+            case 6: uc11_exportReports();          break;
         }
     } while (option != 0);
 }

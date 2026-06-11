@@ -227,3 +227,7 @@ std::vector<SNSUser*> HealthcareCenter::getWaitingRoom() const {
 std::vector<SNSUser*> HealthcareCenter::getRecoveryRoom() const {
     return recoveryRoom;
 }
+
+std::vector<Appointment*> HealthcareCenter::getMasterSchedule() const {
+    return masterSchedule;
+}

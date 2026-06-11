@@ -57,6 +57,7 @@ public:
     std::vector<SNSUser*> getRecoveryRoom() const;
     std::vector<VaccineType*> getVaccineCatalog() const;
     std::vector<Vaccine*> getInventory() const;
+    std::vector<Appointment*> getMasterSchedule() const;
 };
 
 #endif //FSOFT2026_1DD_1_HEALTHCARECENTER_H
