@@ -571,12 +571,65 @@ void mainMenu(){
         std::cout << "========================================\n";
 
         option = readInt("Option: ", 0, 3);
+        
+        bool authenticated = false;
+        if (option == 1) {
+            std::string cc;
+            std::cout << "Login (Citizen Card / 'admin' / '0' to cancel): ";
+            std::getline(std::cin, cc);
+            if (cc == "0") continue;
+            if (cc == "admin") authenticated = true;
+            else {
+                for (Employee* emp : globalHC.getEmployees()) {
+                    if (emp->getCitizenCard() == cc && emp->getRole() == "Center Administrator") {
+                        authenticated = true; break;
+                    }
+                }
+                if (!authenticated) {
+                    std::cout << "\n[ERROR] Authentication failed for Administrator.\n";
+                    pauseConsole();
+                    continue;
+                }
+            }
+        } else if (option == 2) {
+            std::string cc;
+            std::cout << "Login (Citizen Card / '0' to cancel): ";
+            std::getline(std::cin, cc);
+            if (cc == "0") continue;
+            for (Employee* emp : globalHC.getEmployees()) {
+                if (emp->getCitizenCard() == cc && emp->getRole() == "Receptionist") {
+                    authenticated = true; break;
+                }
+            }
+            if (!authenticated) {
+                std::cout << "\n[ERROR] Authentication failed for Receptionist.\n";
+                pauseConsole();
+                continue;
+            }
+        } else if (option == 3) {
+            std::string cc;
+            std::cout << "Login (Citizen Card / '0' to cancel): ";
+            std::getline(std::cin, cc);
+            if (cc == "0") continue;
+            for (Employee* emp : globalHC.getEmployees()) {
+                if (emp->getCitizenCard() == cc && emp->getRole() == "Nurse") {
+                    authenticated = true; break;
+                }
+            }
+            if (!authenticated) {
+                std::cout << "\n[ERROR] Authentication failed for Nurse.\n";
+                pauseConsole();
+                continue;
+            }
+        }
+
         switch (option) {
             case 1: menuCenterAdministrator(); break;
             case 2: menuReceptionist(); break;
             case 3: menuNurse(); break;
             case 0:
-                pauseConsole();
+                std::cout << "\nGoodbye!\n";
+                break;
         }
     } while (option != 0);
 }
