@@ -64,6 +64,17 @@ bool VaccineController::registerVaccine(int typeIndex, std::string commercialNam
     return true;
 }
 
+bool VaccineController::adjustVaccineQuantity(const std::string& lotNumber, int newQuantity) {
+    if (newQuantity < 0) return false;
+    Vaccine* v = hc->findVaccineByLotNumber(lotNumber);
+    if (v != nullptr) {
+        v->setQuantity(newQuantity);
+        FileManager::saveVaccines(hc, "vaccines.txt");
+        return true;
+    }
+    return false;
+}
+
 // UC3
 
 bool compareVaccinesByBrand(Vaccine* a, Vaccine* b) {

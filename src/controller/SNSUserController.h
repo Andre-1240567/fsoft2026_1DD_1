@@ -20,6 +20,8 @@ public:
         std::string citizenCardNumber,
         std::string sex = "N/A"
     );
+
+    bool updateSNSUser(const std::string& snsNumber, const std::string& newAddress, const std::string& newPhone);
 };
 
 #endif //FSOFT2026_1DD_1_SNSUSERCONTROLLER_H

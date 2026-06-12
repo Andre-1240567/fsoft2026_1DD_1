@@ -26,6 +26,9 @@ public:
     std::string getPhone() const;
     std::string getSex() const;
     std::string getCitizenCardNumber() const;
+
+    void setAddress(const std::string& newAddress);
+    void setPhone(const std::string& newPhone);
 };
 
 #endif //FSOFT2026_1DD_1_SNSUSER_H

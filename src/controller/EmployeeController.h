@@ -25,6 +25,8 @@ public:
         std::string cc,
         std::string role
     );
+
+    bool updateEmployee(const std::string& cc, const std::string& newPhone, const std::string& newEmail);
 };
 
 

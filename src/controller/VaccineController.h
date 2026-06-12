@@ -35,6 +35,8 @@ public:
             std::string expiry,
             int qty);
 
+    bool adjustVaccineQuantity(const std::string& lotNumber, int newQuantity);
+
     // UC3
     std::map<VaccineType*, std::vector<Vaccine*>> getVaccineStockGroupedAndSorted();
 };

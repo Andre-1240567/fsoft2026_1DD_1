@@ -243,3 +243,74 @@ As a Nurse, I want to consult the list of SNS Users currently in the Recovery Ro
 - `Nurse`
 - `HealthcareCenter`
 - `SNSUser`
+
+---
+
+# US13 - Edit SNS User Contact Info
+
+## Description
+As a Receptionist, I want to edit the contact information (address and phone) of an SNS User, so that the system remains up to date.
+
+## Acceptance Criteria
+- [ ] Prompt the Receptionist for the SNS User Number.
+- [ ] Display current address and phone.
+- [ ] Allow input of new address and phone.
+- [ ] Validate the new phone number.
+- [ ] Save changes persistently.
+
+## Domain Entities Involved
+- `Receptionist`
+- `SNSUser`
+
+---
+
+# US14 - Adjust Vaccine Inventory
+
+## Description
+As a Center Administrator, I want to adjust the available stock of a specific vaccine lot, so that the inventory reflects real-world counts.
+
+## Acceptance Criteria
+- [ ] Prompt the Administrator for the Vaccine Lot Number.
+- [ ] Display current quantity.
+- [ ] Allow input of a new non-negative quantity.
+- [ ] Save changes persistently.
+
+## Domain Entities Involved
+- `CenterAdministrator`
+- `Vaccine`
+
+---
+
+# US15 - Edit Employee Contact Info
+
+## Description
+As a Center Administrator, I want to edit the contact info (phone and email) of an Employee, so that staff records are accurate.
+
+## Acceptance Criteria
+- [ ] Prompt for Employee Citizen Card.
+- [ ] Display current phone and email.
+- [ ] Allow input of new phone and email.
+- [ ] Validate new phone and email.
+- [ ] Save changes persistently.
+
+## Domain Entities Involved
+- `CenterAdministrator`
+- `Employee`
+
+---
+
+# US16 - Discharge SNS User
+
+## Description
+As a Nurse, I want to discharge an SNS User from the Recovery Room after their observation period is over, so that they can leave the center and the system accurately reflects the current occupants.
+
+## Acceptance Criteria
+- [ ] Prompt the Nurse for the SNS User Number.
+- [ ] Ensure the user is currently in the Recovery Room.
+- [ ] Remove the user from the Recovery Room list.
+- [ ] Display a confirmation message.
+
+## Domain Entities Involved
+- `Nurse`
+- `HealthcareCenter`
+- `SNSUser`

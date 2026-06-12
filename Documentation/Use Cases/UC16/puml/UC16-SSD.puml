@@ -1,0 +1,26 @@
+@startuml SSD_DischargeUser
+title SSD: UC16 - Discharge SNS User
+
+actor "Nurse" as Nurse
+participant ":System" as System
+
+autonumber
+activate Nurse
+
+Nurse -> System: starts the process to discharge an SNS User from the Recovery Room
+activate System
+System --> Nurse: shows the list of users in the Recovery Room and requests SNS User Number
+deactivate System
+
+Nurse -> System: inputs the SNS User Number
+activate System
+
+alt user found in Recovery Room
+    System --> Nurse: confirms successful discharge of the SNS user
+else user not found
+    System --> Nurse: informs error (user not found)
+end
+
+deactivate System
+deactivate Nurse
+@enduml

@@ -58,3 +58,16 @@ std::vector<Employee*> EmployeeController::getEmployeesByRole(std::string role) 
 
     return filteredList;
 }
+
+bool EmployeeController::updateEmployee(const std::string& cc, const std::string& newPhone, const std::string& newEmail) {
+    std::vector<Employee*> allEmployees = hc->getEmployees();
+    for (Employee* emp : allEmployees) {
+        if (emp->getCitizenCard() == cc) {
+            emp->setPhone(newPhone);
+            emp->setEmail(newEmail);
+            FileManager::saveEmployees(hc, "employees.txt");
+            return true;
+        }
+    }
+    return false;
+}

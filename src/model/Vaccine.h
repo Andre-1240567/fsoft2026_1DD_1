@@ -24,6 +24,7 @@ public:
     int getQuantity() const;
     VaccineType* getType() const;
     bool decreaseQuantity(int amount = 1);
+    void setQuantity(int newQuantity);
 };
 
 #endif

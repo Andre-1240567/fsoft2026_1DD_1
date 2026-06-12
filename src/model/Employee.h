@@ -20,6 +20,9 @@ public:
     std::string getCitizenCard() const;
     virtual std::string getRole() const = 0;
 
+    void setPhone(const std::string& newPhone);
+    void setEmail(const std::string& newEmail);
+
     virtual ~Employee() = default;
 };
 

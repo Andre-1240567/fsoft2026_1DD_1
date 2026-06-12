@@ -1,0 +1,31 @@
+@startuml SSD_AdjustVaccineInventory
+title SSD: UC14 - Adjust Vaccine Inventory
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+activate Admin
+
+Admin -> System: starts adjusting the inventory for a vaccine
+activate System
+System --> Admin: requests Vaccine Lot Number
+deactivate System
+
+Admin -> System: inputs Vaccine Lot Number
+activate System
+System --> Admin: shows current quantity and requests new quantity
+deactivate System
+
+Admin -> System: inputs new quantity
+activate System
+
+alt valid quantity
+    System --> Admin: confirms successful update of the vaccine inventory
+else invalid quantity or lot not found
+    System --> Admin: informs error
+end
+
+deactivate System
+deactivate Admin
+@enduml

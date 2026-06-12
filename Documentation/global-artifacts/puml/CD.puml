@@ -3,7 +3,7 @@ title Design Class Diagram - MedManager
 skinparam classAttributeIconSize 0
 hide circle
 
-skinparam linetype ortho
+
 skinparam nodesep 60
 skinparam ranksep 80
 
@@ -14,19 +14,25 @@ class MainMenu {
     + readInt(prompt: string, min: int, max: int): int
 }
 
+together {
+
+
 class VaccineController {
     + createVaccineType(code: string, disease: string, tech: string, recPeriod: int): bool
     + registerVaccine(typeIndex: int, brand: string, lot: string, expiry: string, qty: int): bool
     + getVaccineStockGroupedAndSorted(): map<VaccineType*, vector<Vaccine*>>
+    + adjustVaccineQuantity(lotNumber: string, newQuantity: int): bool
 }
 
 class EmployeeController {
     + registerEmployee(role: int, id: string, name: string, address: string, phone: string, email: string, cc: string): bool
     + getEmployeesByRole(role: int): vector<Employee*>
+    + updateEmployee(cc: string, newPhone: string, newEmail: string): bool
 }
 
 class SNSUserController {
     + registerSNSUser(snsNumber: string, name: string, address: string, birthdate: string, phone: string, cc: string, sex: string): bool
+    + updateSNSUser(snsNumber: string, newAddress: string, newPhone: string): bool
 }
 
 class AppointmentController {
@@ -35,20 +41,17 @@ class AppointmentController {
     + hasPendingAppointment(snsNumber: string, typeIndex: int): bool
 }
 
-class ArrivalController {
-    + registerArrival(snsNumber: string): bool
-}
-
-class VaccinationController {
+class NurseController {
+    + getWaitingRoomUsers(): vector<SNSUser*>
+    + getRecoveryRoomUsers(): vector<SNSUser*>
     + recordAdministration(snsNumber: string, lotNumber: string): bool
-}
-
-class WaitingRoomController {
-    + getWaitingRoomList(): vector<SNSUser*>
+    + dischargeUser(snsNumber: string): bool
+    + {static} currentTimestamp(): string
 }
 
 class ExportController {
     + exportReport(listType: string): bool
+}
 }
 
 class HealthcareCenter {
@@ -63,9 +66,11 @@ class HealthcareCenter {
     + addAppointment(appt: Appointment*): bool
     + addArrivalAndQueueUser(arr: Arrival*, user: SNSUser*): bool
     + moveToRecoveryRoom(user: SNSUser*): bool
+    + dischargeUserFromRecoveryRoom(snsNumber: string): bool
     + getWaitingRoom(): vector<SNSUser*>
     + getInventory(): vector<Vaccine*>
     + getEmployees(): vector<Employee*>
+    + getRecoveryRoom(): vector<SNSUser*>
 }
 
 class Employee {
@@ -76,6 +81,8 @@ class Employee {
     + getName(): string
     + getPhone(): string
     + getEmail(): string
+    + setPhone(phone: string): void
+    + setEmail(email: string): void
     + getRole(): string <<virtual>>
 }
 
@@ -97,6 +104,7 @@ class Vaccine {
     - expirationDate: string
     - quantity: int
     + decreaseQuantity(amount: int): void
+    + setQuantity(qty: int): void
 }
 
 class SNSUser {
@@ -109,6 +117,8 @@ class SNSUser {
     - citizenCardNumber: string
     + getSnsNumber(): string
     + getName(): string
+    + setAddress(address: string): void
+    + setPhone(phone: string): void
 }
 
 class Appointment {
@@ -127,23 +137,19 @@ class VaccinationProcess {
 }
 
 
-MainMenu -down..> VaccineController : uses >
-MainMenu -down..> EmployeeController : uses >
-MainMenu -down..> SNSUserController : uses >
-MainMenu -down..> AppointmentController : uses >
-MainMenu -down..> ArrivalController : uses >
-MainMenu -down..> VaccinationController : uses >
-MainMenu -down..> WaitingRoomController : uses >
-MainMenu -down..> ExportController : uses >
+MainMenu ..> VaccineController : uses >
+MainMenu ..> EmployeeController : uses >
+MainMenu ..> SNSUserController : uses >
+MainMenu ..> AppointmentController : uses >
+MainMenu ..> NurseController : uses >
+MainMenu ..> ExportController : uses >
 
-VaccineController -down-> "1" HealthcareCenter : updates >
-EmployeeController -down-> "1" HealthcareCenter : updates >
-SNSUserController -down-> "1" HealthcareCenter : updates >
-AppointmentController -down-> "1" HealthcareCenter : updates >
-ArrivalController -down-> "1" HealthcareCenter : updates >
-VaccinationController -down-> "1" HealthcareCenter : updates >
-WaitingRoomController -down-> "1" HealthcareCenter : reads >
-ExportController -down-> "1" HealthcareCenter : reads >
+VaccineController --> "1" HealthcareCenter : updates >
+EmployeeController --> "1" HealthcareCenter : updates >
+SNSUserController --> "1" HealthcareCenter : updates >
+AppointmentController --> "1" HealthcareCenter : updates >
+NurseController --> "1" HealthcareCenter : updates/reads >
+ExportController --> "1" HealthcareCenter : reads >
 
 HealthcareCenter "1" o-down- "0..*" Employee : employs >
 HealthcareCenter "1" o-down- "0..*" VaccineType : catalog >

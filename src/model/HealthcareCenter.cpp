@@ -216,6 +216,16 @@ bool HealthcareCenter::recordAdministration(const std::string& snsNumber, Vaccin
     return false;
 }
 
+bool HealthcareCenter::dischargeUserFromRecoveryRoom(const std::string& snsNumber) {
+    for (auto it = recoveryRoom.begin(); it != recoveryRoom.end(); ++it) {
+        if ((*it)->getSnsNumber() == snsNumber) {
+            recoveryRoom.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
 std::vector<Appointment*> HealthcareCenter::getAppointments() const {
     return masterSchedule;
 }

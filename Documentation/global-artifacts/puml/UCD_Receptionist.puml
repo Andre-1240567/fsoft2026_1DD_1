@@ -7,9 +7,11 @@ actor "Receptionist" as Rec
     usecase "UC6 - Register an SNS user" as UC6
     usecase "UC7 - Schedule a vaccine administration" as UC7
     usecase "UC8 - Register SNS User Arrival" as UC8
+    usecase "UC13 - Edit SNS User Contact Info" as UC13
 
 
 Rec --> UC6
 Rec --> UC7
 Rec --> UC8
+Rec --> UC13
 @enduml

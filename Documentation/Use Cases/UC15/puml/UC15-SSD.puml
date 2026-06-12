@@ -1,0 +1,31 @@
+@startuml SSD_EditEmployee
+title SSD: UC15 - Edit Employee Contact Info
+
+actor "Center Administrator" as Admin
+participant ":System" as System
+
+autonumber
+activate Admin
+
+Admin -> System: starts editing contact information for an Employee
+activate System
+System --> Admin: requests Employee Citizen Card
+deactivate System
+
+Admin -> System: inputs Citizen Card
+activate System
+System --> Admin: shows current contact info (Phone, Email) and requests new data
+deactivate System
+
+Admin -> System: inputs new Phone and Email
+activate System
+
+alt valid data
+    System --> Admin: confirms successful update of the employee
+else invalid data or employee not found
+    System --> Admin: informs validation error
+end
+
+deactivate System
+deactivate Admin
+@enduml

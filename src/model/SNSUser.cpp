@@ -42,3 +42,11 @@ std::string SNSUser::getSex() const {
 std::string SNSUser::getCitizenCardNumber() const {
     return citizenCardNumber;
 }
+
+void SNSUser::setAddress(const std::string& newAddress) {
+    this->address = newAddress;
+}
+
+void SNSUser::setPhone(const std::string& newPhone) {
+    this->phone = newPhone;
+}

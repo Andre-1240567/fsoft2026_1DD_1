@@ -4,13 +4,14 @@ left to right direction
 
 actor "Nurse" as Nurse
 
-rectangle "MedManager System" {
     usecase "UC9 - Consult SNS Users in the Waiting Room" as UC9
     usecase "UC10 - Record vaccine administration" as UC10
     usecase "UC12 - Consult Recovery Room" as UC12
-}
+    usecase "UC16 - Discharge SNS User" as UC16
+
 
 Nurse --> UC9
 Nurse --> UC10
 Nurse --> UC12
+Nurse --> UC16
 @enduml

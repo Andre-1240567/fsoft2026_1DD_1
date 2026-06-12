@@ -1,0 +1,31 @@
+@startuml SSD_EditSNSUser
+title SSD: UC13 - Edit SNS User Contact Info
+
+actor "Receptionist" as Rec
+participant ":System" as System
+
+autonumber
+activate Rec
+
+Rec -> System: starts editing contact information for an SNS user
+activate System
+System --> Rec: requests SNS User Number
+deactivate System
+
+Rec -> System: inputs SNS User Number
+activate System
+System --> Rec: shows current contact info (Address, Phone) and requests new data
+deactivate System
+
+Rec -> System: inputs new Address and Phone
+activate System
+
+alt valid data
+    System --> Rec: confirms successful update of the SNS user
+else invalid data or SNS user not found
+    System --> Rec: informs validation error
+end
+
+deactivate System
+deactivate Rec
+@enduml

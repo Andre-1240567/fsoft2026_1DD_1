@@ -1,0 +1,83 @@
+@startuml SD_EditEmployee
+title SD: UC15 - Edit Employee Contact Info
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant "employeeController\n: EmployeeController" as CTRL
+participant "globalHC\n: HealthcareCenter" as HC
+participant "emp\n: Employee" as Employee
+participant "FileManager" as FM
+
+autonumber
+
+activate Admin
+Admin -> UI: starts editing contact information for an Employee
+activate UI
+
+UI --> Admin: requests Employee Citizen Card
+deactivate UI
+
+Admin -> UI: inputs Citizen Card
+activate UI
+
+UI -> HC: getEmployees()
+activate HC
+HC --> UI: returns employees list
+deactivate HC
+
+note right of UI
+  UI loops through employees list
+  to find the employee with matching CC
+end note
+
+UI -> Employee: getPhone()
+activate Employee
+Employee --> UI: returns current phone
+deactivate Employee
+
+UI -> Employee: getEmail()
+activate Employee
+Employee --> UI: returns current email
+deactivate Employee
+
+UI --> Admin: shows current contact info and requests new data
+deactivate UI
+
+Admin -> UI: inputs new Phone and Email
+activate UI
+
+UI -> CTRL: updateEmployee(cc, newPhone, newEmail)
+activate CTRL
+
+CTRL -> HC: getEmployees()
+activate HC
+HC --> CTRL: returns employees list
+deactivate HC
+
+note right of CTRL
+  CTRL loops through employees list
+  to find the employee with matching CC
+end note
+
+CTRL -> Employee: setPhone(newPhone)
+activate Employee
+Employee --> CTRL: OK
+deactivate Employee
+
+CTRL -> Employee: setEmail(newEmail)
+activate Employee
+Employee --> CTRL: OK
+deactivate Employee
+
+CTRL -> FM: saveEmployees(hc, "employees.txt")
+activate FM
+FM --> CTRL: returns void
+deactivate FM
+
+CTRL --> UI: returns true
+
+UI --> Admin: confirms successful update
+deactivate CTRL
+deactivate UI
+deactivate Admin
+@enduml

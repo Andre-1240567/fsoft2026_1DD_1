@@ -18,6 +18,7 @@ public:
     std::vector<SNSUser*> getWaitingRoomUsers();
     std::vector<SNSUser*> getRecoveryRoomUsers();
     bool recordAdministration(const std::string& snsNumber, const std::string& lotNumber);
+    bool dischargeUser(const std::string& snsNumber);
     static std::string currentTimestamp();
 };
 

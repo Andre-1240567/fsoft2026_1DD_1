@@ -42,6 +42,7 @@ public:
     bool addAppointment(Appointment* appointment);
     bool registerArrival(const std::string& snsNumber, const std::string& currentDate);
     bool recordAdministration(const std::string& snsNumber, Vaccine* vaccine, const std::string& timestamp);
+    bool dischargeUserFromRecoveryRoom(const std::string& snsNumber);
 
     SNSUser* findSNSUserByNumber(const std::string& snsNumber) const;
     VaccineType* findVaccineTypeByCode(const std::string& code) const;

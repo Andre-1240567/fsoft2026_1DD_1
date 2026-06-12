@@ -35,3 +35,14 @@ bool SNSUserController::registerSNSUser(
 
     return success;
 }
+
+bool SNSUserController::updateSNSUser(const std::string& snsNumber, const std::string& newAddress, const std::string& newPhone) {
+    SNSUser* user = hc->findSNSUserByNumber(snsNumber);
+    if (user != nullptr) {
+        user->setAddress(newAddress);
+        user->setPhone(newPhone);
+        FileManager::saveSNSUserRegistry(hc, "sns_users.txt");
+        return true;
+    }
+    return false;
+}

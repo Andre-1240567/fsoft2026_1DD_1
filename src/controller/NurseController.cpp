@@ -25,6 +25,10 @@ bool NurseController::recordAdministration(const std::string& snsNumber, const s
     return success;
 }
 
+bool NurseController::dischargeUser(const std::string& snsNumber) {
+    return hc->dischargeUserFromRecoveryRoom(snsNumber);
+}
+
 std::string NurseController::currentTimestamp() {
     std::time_t now = std::time(nullptr);
     std::tm localTime{};

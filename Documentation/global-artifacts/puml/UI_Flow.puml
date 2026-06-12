@@ -14,18 +14,22 @@ state "Admin Menu" as AdminMenu {
   state "UC4 - List Employees by Role" as UC4
   state "UC5 - List All Vaccines" as UC5
   state "UC11 - Export Reports" as UC11
+  state "UC14 - Adjust Vaccine Inventory" as UC14
+  state "UC15 - Edit Employee Info" as UC15
 }
 
 state "Receptionist Menu" as RecMenu {
   state "UC6 - Register SNS User" as UC6
   state "UC7 - Schedule Vaccine" as UC7
   state "UC8 - Register Arrival" as UC8
+  state "UC13 - Edit SNS User Info" as UC13
 }
 
 state "Nurse Menu" as NurMenu {
   state "UC9 - Consult Waiting Room" as UC9
   state "UC10 - Record Administration" as UC10
   state "UC12 - Consult Recovery Room" as UC12
+  state "UC16 - Discharge SNS User" as UC16
 }
 
 [*] --> MainMenu
