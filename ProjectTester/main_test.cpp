@@ -681,6 +681,34 @@ TEST(UC12_Tests, ConsultRecoveryRoom) {
 }
 
 // =========================================================================
+// UC16 Tests - Discharge User
+// =========================================================================
+
+TEST(UC16_Tests, DischargeUserFromRecoveryRoom) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    VaccineController vc(&hc);
+    AppointmentController ac(&hc);
+    NurseController nc(&hc);
+
+    sc.registerSNSUser("SNS002", "Jose", "Rua B", "1980-01-01", "912345679", "12345679");
+    vc.createVaccineType("COVID", "COVID-19", "mRNA", 30);
+    vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 5);
+    ac.createAppointment("SNS002", "COVID", AppointmentController::currentDate(), "10:30");
+    ac.registerArrival("SNS002");
+    nc.recordAdministration("SNS002", "LOT123");
+
+    ASSERT_EQ(nc.getRecoveryRoomUsers().size(), 1);
+    
+    // Discharge
+    EXPECT_TRUE(nc.dischargeUser("SNS002"));
+    EXPECT_EQ(nc.getRecoveryRoomUsers().size(), 0);
+    
+    // Discharge non-existent
+    EXPECT_FALSE(nc.dischargeUser("SNS002"));
+}
+
+// =========================================================================
 // Utils Tests - Formatting and Validations
 // =========================================================================
 
@@ -703,6 +731,65 @@ TEST(Utils_Tests, ValidatePhone) {
 
 TEST(Utils_Tests, ValidateCC) {
     EXPECT_TRUE(isValidCC("12345678"));
-    EXPECT_TRUE(isValidCC("12345678 1 ZZ 1"));
+    EXPECT_FALSE(isValidCC("12345678 1 ZZ 1"));
     EXPECT_FALSE(isValidCC("1234567"));
+    EXPECT_FALSE(isValidCC("abcdefgh"));
 }
+
+TEST(Utils_Tests, ValidateSNS) {
+    EXPECT_TRUE(isValidSNS("123456789"));
+    EXPECT_FALSE(isValidSNS("12345678"));
+    EXPECT_FALSE(isValidSNS("1234567890"));
+    EXPECT_FALSE(isValidSNS("12345678a"));
+}
+
+// =========================================================================
+// Data Editing Tests (UC13, UC14, UC15)
+// =========================================================================
+
+TEST(UC13_Tests, UpdateSNSUserContactInfo) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    SNSUserController sc(&hc);
+    
+    sc.registerSNSUser("111111111", "Maria", "Rua A", "1990-01-01", "912345678", "12345678");
+    EXPECT_TRUE(sc.updateSNSUser("111111111", "Rua B", "987654321"));
+    
+    SNSUser* u = hc.findSNSUserByNumber("111111111");
+    ASSERT_NE(u, nullptr);
+    EXPECT_EQ(u->getAddress(), "Rua B");
+    EXPECT_EQ(u->getPhone(), "987654321");
+}
+
+TEST(UC14_Tests, AdjustVaccineInventory) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    VaccineController vc(&hc);
+    
+    vc.createVaccineType("COVID", "COVID-19", "mRNA", 30);
+    vc.registerVaccine(0, "Comirnaty", "Pfizer", "LOT123", "2027-12-31", 100);
+    
+    EXPECT_TRUE(vc.adjustVaccineQuantity("LOT123", 95));
+    Vaccine* v = hc.findVaccineByLotNumber("LOT123");
+    ASSERT_NE(v, nullptr);
+    EXPECT_EQ(v->getQuantity(), 95);
+    
+    EXPECT_FALSE(vc.adjustVaccineQuantity("LOT123", -5));
+}
+
+TEST(UC15_Tests, UpdateEmployeeContactInfo) {
+    HealthcareCenter hc("Test Center", "Addr", "123", "email@test.com");
+    EmployeeController ec(&hc);
+    
+    ec.registerEmployee("John", "910000001", "john@med.pt", "11111111", "Nurse");
+    EXPECT_TRUE(ec.updateEmployee("11111111", "920000002", "john.new@med.pt"));
+    
+    bool found = false;
+    for (Employee* e : hc.getEmployees()) {
+        if (e->getCitizenCard() == "11111111") {
+            EXPECT_EQ(e->getPhone(), "920000002");
+            EXPECT_EQ(e->getEmail(), "john.new@med.pt");
+            found = true;
+        }
+    }
+    EXPECT_TRUE(found);
+}
+

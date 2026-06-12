@@ -1,0 +1,57 @@
+@startuml SD_DischargeUser
+title SD: UC16 - Discharge SNS User
+
+actor "Nurse" as Nurse
+participant ": MainMenu" as UI
+participant "nurseController\n: NurseController" as CTRL
+participant "globalHC\n: HealthcareCenter" as HC
+
+autonumber
+
+activate Nurse
+Nurse -> UI: starts the process to discharge an SNS User
+activate UI
+
+UI -> CTRL: getRecoveryRoomUsers()
+activate CTRL
+
+CTRL -> HC: getRecoveryRoom()
+activate HC
+HC --> CTRL: returns recovery room list
+deactivate HC
+
+CTRL --> UI: returns recovery room list
+deactivate CTRL
+
+UI --> Nurse: shows the list of users in the Recovery Room and requests SNS User Number
+deactivate UI
+
+Nurse -> UI: inputs the SNS User Number
+activate UI
+
+UI -> CTRL: dischargeUser(snsNumber)
+activate CTRL
+
+CTRL -> HC: dischargeUserFromRecoveryRoom(snsNumber)
+activate HC
+
+note right of HC
+  HC iterates through the recoveryRoom list.
+  If a user matches snsNumber, it is erased from the vector.
+end note
+
+HC --> CTRL: returns true/false
+deactivate HC
+
+CTRL --> UI: returns true/false
+deactivate CTRL
+
+alt returns true
+    UI --> Nurse: confirms successful discharge
+else returns false
+    UI --> Nurse: informs error (user not found)
+end
+
+deactivate UI
+deactivate Nurse
+@enduml

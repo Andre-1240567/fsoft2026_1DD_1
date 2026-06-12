@@ -6,4 +6,14 @@ Employee::Employee(std::string n, std::string p, std::string e, std::string cc)
 std::string Employee::getName() const { return name; }
 std::string Employee::getPhone() const { return phone; }
 std::string Employee::getEmail() const { return email; }
-std::string Employee::getCitizenCard() const {return citizenCard;}
+std::string Employee::getCitizenCard() const {
+    return citizenCard;
+}
+
+void Employee::setPhone(const std::string& newPhone) {
+    phone = newPhone;
+}
+
+void Employee::setEmail(const std::string& newEmail) {
+    email = newEmail;
+}

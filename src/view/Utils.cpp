@@ -50,11 +50,11 @@ std::string readPhone(const std::string& prompt) {
 }
 
 bool isValidCC(const std::string& cc) {
-    int digitCount = 0;
+    if (cc.length() != 8) return false;
     for (char c : cc) {
-        if (std::isdigit(c)) digitCount++;
+        if (!std::isdigit(c)) return false;
     }
-    return (digitCount >= 8 && cc.length() >= 8);
+    return true;
 }
 
 std::string readCC(const std::string& prompt) {
@@ -63,7 +63,25 @@ std::string readCC(const std::string& prompt) {
         std::cout << prompt;
         std::getline(std::cin, cc);
         if (isValidCC(cc)) return cc;
-        std::cout << "  [ERROR] Invalid Citizen Card. Must contain at least 8 digits.\n";
+        std::cout << "  [ERROR] Invalid Citizen Card. Must contain exactly 8 digits.\n";
+    }
+}
+
+bool isValidSNS(const std::string& sns) {
+    if (sns.length() != 9) return false;
+    for (char c : sns) {
+        if (!std::isdigit(c)) return false;
+    }
+    return true;
+}
+
+std::string readSNS(const std::string& prompt) {
+    std::string sns;
+    while (true) {
+        std::cout << prompt;
+        std::getline(std::cin, sns);
+        if (isValidSNS(sns)) return sns;
+        std::cout << "  [ERROR] Invalid SNS Number. Must contain exactly 9 digits.\n";
     }
 }
 

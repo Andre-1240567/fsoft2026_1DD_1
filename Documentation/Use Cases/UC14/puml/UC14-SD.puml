@@ -1,0 +1,63 @@
+@startuml SD_AdjustVaccineInventory
+title SD: UC14 - Adjust Vaccine Inventory
+
+actor "Center Administrator" as Admin
+participant ": MainMenu" as UI
+participant "vaccineController\n: VaccineController" as CTRL
+participant "globalHC\n: HealthcareCenter" as HC
+participant "v\n: Vaccine" as Vaccine
+participant "FileManager" as FM
+
+autonumber
+
+activate Admin
+Admin -> UI: starts adjusting the inventory for a vaccine
+activate UI
+
+UI --> Admin: requests Vaccine Lot Number
+deactivate UI
+
+Admin -> UI: inputs Vaccine Lot Number
+activate UI
+
+UI -> HC: findVaccineByLotNumber(lotNumber)
+activate HC
+HC --> UI: returns vaccine pointer
+deactivate HC
+
+UI -> Vaccine: getQuantity()
+activate Vaccine
+Vaccine --> UI: returns current quantity
+deactivate Vaccine
+
+UI --> Admin: shows current quantity and requests new quantity
+deactivate UI
+
+Admin -> UI: inputs new quantity
+activate UI
+
+UI -> CTRL: adjustVaccineQuantity(lotNumber, newQty)
+activate CTRL
+
+CTRL -> HC: findVaccineByLotNumber(lotNumber)
+activate HC
+HC --> CTRL: returns vaccine pointer
+deactivate HC
+
+CTRL -> Vaccine: setQuantity(newQty)
+activate Vaccine
+Vaccine --> CTRL: OK
+deactivate Vaccine
+
+CTRL -> FM: saveVaccines(hc, "vaccines.txt")
+activate FM
+FM --> CTRL: returns void
+deactivate FM
+
+CTRL --> UI: returns true
+
+UI --> Admin: confirms successful update
+deactivate CTRL
+deactivate UI
+deactivate Admin
+@enduml

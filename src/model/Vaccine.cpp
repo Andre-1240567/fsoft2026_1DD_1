@@ -23,3 +23,7 @@ bool Vaccine::decreaseQuantity(int amount) {
     quantity -= amount;
     return true;
 }
+
+void Vaccine::setQuantity(int newQuantity) {
+    quantity = newQuantity;
+}

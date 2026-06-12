@@ -1,0 +1,73 @@
+@startuml SD_EditSNSUser
+title SD: UC13 - Edit SNS User Contact Info
+
+actor "Receptionist" as Rec
+participant ": MainMenu" as UI
+participant "snsUserController\n: SNSUserController" as CTRL
+participant "globalHC\n: HealthcareCenter" as HC
+participant "user\n: SNSUser" as User
+participant "FileManager" as FM
+
+autonumber
+
+activate Rec
+Rec -> UI: starts editing contact information for an SNS user
+activate UI
+
+UI --> Rec: requests SNS User Number
+deactivate UI
+
+Rec -> UI: inputs SNS User Number
+activate UI
+
+UI -> HC: findSNSUserByNumber(snsNumber)
+activate HC
+HC --> UI: returns user pointer
+deactivate HC
+
+UI -> User: getAddress()
+activate User
+User --> UI: returns current address
+deactivate User
+
+UI -> User: getPhone()
+activate User
+User --> UI: returns current phone
+deactivate User
+
+UI --> Rec: shows current contact info and requests new data
+deactivate UI
+
+Rec -> UI: inputs new Address and Phone
+activate UI
+
+UI -> CTRL: updateSNSUser(snsNumber, newAddress, newPhone)
+activate CTRL
+
+CTRL -> HC: findSNSUserByNumber(snsNumber)
+activate HC
+HC --> CTRL: returns user pointer
+deactivate HC
+
+CTRL -> User: setAddress(newAddress)
+activate User
+User --> CTRL: OK
+deactivate User
+
+CTRL -> User: setPhone(newPhone)
+activate User
+User --> CTRL: OK
+deactivate User
+
+CTRL -> FM: saveSNSUserRegistry(hc, "sns_users.txt")
+activate FM
+FM --> CTRL: returns void
+deactivate FM
+
+CTRL --> UI: returns true
+
+UI --> Rec: confirms successful update
+deactivate CTRL
+deactivate UI
+deactivate Rec
+@enduml

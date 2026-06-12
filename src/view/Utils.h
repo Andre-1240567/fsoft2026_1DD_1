@@ -13,12 +13,14 @@ int readInt(const std::string& prompt, int min, int max); //Garante que o progra
 
 bool isValidPhone(const std::string& phone);
 bool isValidCC(const std::string& cc);
+bool isValidSNS(const std::string& sns);
 bool isValidDate(const std::string& date);
 bool isValidTime(const std::string& time);
 bool isValidEmail(const std::string& email);
 
 std::string readPhone(const std::string& prompt);
 std::string readCC(const std::string& prompt);
+std::string readSNS(const std::string& prompt);
 std::string readDate(const std::string& prompt);
 std::string readTime(const std::string& prompt);
 std::string readEmail(const std::string& prompt);

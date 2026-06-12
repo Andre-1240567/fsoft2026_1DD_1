@@ -249,7 +249,7 @@ void uc6_registerSNSUser() {
     std::cout << "Name            : "; std::getline(std::cin, name);
     std::cout << "Address         : "; std::getline(std::cin, address);
     phone = readPhone("Phone           : ");
-    std::cout << "SNS User Number : "; std::getline(std::cin, snsNumber);
+    snsNumber = readSNS("SNS User Number : ");
     cc = readCC("Citizen Card    : ");
     birthdate = readDate("Birth Date (YYYY-MM-DD): ");
 
@@ -299,7 +299,7 @@ void uc7_scheduleVaccineAdministration() {
     std::cout << "========================================\n\n";
 
     std::string snsNumber;
-    std::cout << "SNS User Number : "; std::getline(std::cin, snsNumber);
+    snsNumber = readSNS("SNS User Number : ");
 
     SNSUser* user = globalHC.findSNSUserByNumber(snsNumber);
     if (user == nullptr) {
@@ -363,7 +363,7 @@ void uc8_registerSNSUserArrival() {
     std::cout << "========================================\n\n";
 
     std::string snsNumber;
-    std::cout << "SNS User Number : "; std::getline(std::cin, snsNumber);
+    snsNumber = readSNS("SNS User Number : ");
 
     bool success = appointmentController.registerArrival(snsNumber);
     if (success) {
@@ -483,6 +483,100 @@ void uc10_recordVaccineAdministration() {
     pauseConsole();
 }
 
+// ---- UC13 ----
+void uc13_editSNSUser() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC13 - Edit SNS User Contact Info\n";
+    std::cout << "========================================\n\n";
+
+    std::string snsNumber = readSNS("SNS User Number : ");
+    SNSUser* user = globalHC.findSNSUserByNumber(snsNumber);
+    if (user == nullptr) {
+        std::cout << "\n[ERROR] SNS user not found.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "\nCurrent Address : " << user->getAddress() << "\n";
+    std::cout << "Current Phone   : " << user->getPhone() << "\n\n";
+
+    std::string newAddress;
+    std::cout << "New Address     : "; std::getline(std::cin, newAddress);
+    std::string newPhone = readPhone("New Phone       : ");
+
+    if (snsUserController.updateSNSUser(snsNumber, newAddress, newPhone)) {
+        std::cout << "\n[OK] SNS user updated successfully!\n";
+    } else {
+        std::cout << "\n[ERROR] Failed to update SNS user.\n";
+    }
+    pauseConsole();
+}
+
+// ---- UC14 ----
+void uc14_adjustVaccineInventory() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC14 - Adjust Vaccine Inventory\n";
+    std::cout << "========================================\n\n";
+
+    std::string lotNumber;
+    std::cout << "Vaccine Lot Number: "; std::getline(std::cin, lotNumber);
+    Vaccine* v = globalHC.findVaccineByLotNumber(lotNumber);
+    if (v == nullptr) {
+        std::cout << "\n[ERROR] Vaccine lot not found.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "\nCurrent Quantity : " << v->getQuantity() << "\n\n";
+    int newQty = readInt("New Quantity     : ", 0, 1000000);
+
+    if (vaccineController.adjustVaccineQuantity(lotNumber, newQty)) {
+        std::cout << "\n[OK] Vaccine quantity updated successfully!\n";
+    } else {
+        std::cout << "\n[ERROR] Failed to update vaccine quantity.\n";
+    }
+    pauseConsole();
+}
+
+// ---- UC15 ----
+void uc15_editEmployee() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC15 - Edit Employee Contact Info\n";
+    std::cout << "========================================\n\n";
+
+    std::string cc = readCC("Employee Citizen Card: ");
+    Employee* emp = nullptr;
+    for (Employee* e : globalHC.getEmployees()) {
+        if (e->getCitizenCard() == cc) {
+            emp = e;
+            break;
+        }
+    }
+
+    if (emp == nullptr) {
+        std::cout << "\n[ERROR] Employee not found.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "\nCurrent Phone : " << emp->getPhone() << "\n";
+    std::cout << "Current Email : " << emp->getEmail() << "\n\n";
+
+    std::string newPhone = readPhone("New Phone     : ");
+    std::string newEmail;
+    std::cout << "New Email     : "; std::getline(std::cin, newEmail);
+
+    if (employeeController.updateEmployee(cc, newPhone, newEmail)) {
+        std::cout << "\n[OK] Employee updated successfully!\n";
+    } else {
+        std::cout << "\n[ERROR] Failed to update employee.\n";
+    }
+    pauseConsole();
+}
+
 // ---- UC11 ----
 void uc11_exportReports() {
     clearScreen();
@@ -544,10 +638,12 @@ void menuCenterAdministrator() {
         std::cout << "  4. [UC4] List Employees by Role\n";
         std::cout << "  5. [UC5] List All Vaccines\n";
         std::cout << "  6. [UC11] Export Reports\n";
+        std::cout << "  7. [UC14] Adjust Vaccine Inventory\n";
+        std::cout << "  8. [UC15] Edit Employee Contact Info\n";
         std::cout << "  0. Back\n";
         std::cout << "========================================\n";
 
-        option = readInt("Option: ", 0, 6);
+        option = readInt("Option: ", 0, 8);
         switch (option) {
             case 1: uc1_createVaccineType();       break;
             case 2: uc2_registerPhysicalVaccine(); break;
@@ -555,6 +651,8 @@ void menuCenterAdministrator() {
             case 4: uc4_listEmployeesByRole();     break;
             case 5: uc5_listVaccineStock();        break;
             case 6: uc11_exportReports();          break;
+            case 7: uc14_adjustVaccineInventory(); break;
+            case 8: uc15_editEmployee();           break;
         }
     } while (option != 0);
 }
@@ -571,10 +669,11 @@ void menuReceptionist()
         std::cout << "  1. [UC6] Register an SNS user\n";
         std::cout << "  2. [UC7] Schedule a vaccine administration\n";
         std::cout << "  3. [UC8] Register SNS User Arrival\n";
+        std::cout << "  4. [UC13] Edit SNS User Contact Info\n";
         std::cout << "  0. Back\n";
         std::cout << "========================================\n";
 
-        option = readInt("Option: ", 0, 3);
+        option = readInt("Option: ", 0, 4);
         switch (option) {
         case 1:
             uc6_registerSNSUser();
@@ -585,11 +684,44 @@ void menuReceptionist()
         case 3:
             uc8_registerSNSUserArrival();
             break;
+        case 4:
+            uc13_editSNSUser();
+            break;
         case 0:
             std::cout << "\nGoodbye!\n";
             break;
         }
     }while (option != 0);
+}
+
+// ---- UC16 ----
+void uc16_dischargeUser() {
+    clearScreen();
+    std::cout << "========================================\n";
+    std::cout << "   UC16 - Discharge SNS User\n";
+    std::cout << "========================================\n\n";
+
+    std::vector<SNSUser*> recovery = nurseController.getRecoveryRoomUsers();
+    if (recovery.empty()) {
+        std::cout << "[INFO] Recovery room is currently empty.\n";
+        pauseConsole();
+        return;
+    }
+
+    std::cout << "Users in Recovery Room:\n";
+    for (SNSUser* u : recovery) {
+        std::cout << " - " << u->getSnsNumber() << " (" << u->getName() << ")\n";
+    }
+    std::cout << "\n";
+
+    std::string snsNumber = readSNS("SNS User Number to Discharge: ");
+
+    if (nurseController.dischargeUser(snsNumber)) {
+        std::cout << "\n[OK] User successfully discharged from Recovery Room!\n";
+    } else {
+        std::cout << "\n[ERROR] User not found in Recovery Room.\n";
+    }
+    pauseConsole();
 }
 
 // ---- Menu Nurse ----
@@ -601,13 +733,14 @@ void menuNurse()
         std::cout << "========================================\n";
         std::cout << "               NURSE\n";
         std::cout << "========================================\n";
-        std::cout << "  1. [UC9] Consult SNS Users in the Waiting Room\n";
-        std::cout << "  2. [UC10] Record vaccine administration\n";
-        std::cout << "  3. [UC12] Consult SNS Users in the Recovery Room\n";
+        std::cout << "  1. [UC9] Consult Waiting Room\n";
+        std::cout << "  2. [UC10] Record Vaccine Administration\n";
+        std::cout << "  3. [UC12] Consult Recovery Room\n";
+        std::cout << "  4. [UC16] Discharge SNS User\n";
         std::cout << "  0. Back\n";
         std::cout << "========================================\n";
 
-        option = readInt("Option: ", 0, 3);
+        option = readInt("Option: ", 0, 4);
         switch (option) {
         case 1:
             uc9_consultWaitingRoom();
@@ -617,6 +750,9 @@ void menuNurse()
             break;
         case 3:
             uc12_consultRecoveryRoom();
+            break;
+        case 4:
+            uc16_dischargeUser();
             break;
         case 0:
             std::cout << "\nGoodbye!\n";
