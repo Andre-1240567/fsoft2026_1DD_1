@@ -22,9 +22,6 @@ class HealthcareCenter {
     - address
     - phone
     - email
-    - openingHours
-    - closingHours
-    - vaccinesPerHourCapacity
 }
 
 class WaitingRoom

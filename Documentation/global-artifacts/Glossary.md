@@ -9,7 +9,7 @@
 | **Arrival** | **Chegada** | The formal record of the user's physical presence at the center. It links an Appointment to the Waiting Room, triggering the service flow. |
 | **Center Administrator** | **Administrador do Centro** | Employee responsible for managing center resources, including the vaccine catalog (types), physical stock, and employee records. |
 | **Employee** | **Funcionário** | Any worker at the center (Administrator, Nurse, or Receptionist), identified by name, address, phone, email, and citizen card number. |
-| **Healthcare Center** | **Centro de Saúde** | The facility where vaccinations occur, defined by its operating hours and its hourly vaccination capacity. |
+| **Healthcare Center** | **Centro de Saúde** | The facility where vaccinations occur, acting as the central management entity for all users, employees, inventory, and schedules. |
 | **Nurse** | **Enfermeiro** | Healthcare professional responsible for the clinical act of vaccination and for consulting the Waiting Room to call the next user. |
 | **Receptionist** | **Rececionista** | Employee responsible for registering the arrival of users, confirming appointments, and managing initial user data. |
 | **Recovery Room** | **Sala de Recuperação** | A monitored area where users must remain after vaccination for a period defined by the specific Vaccine Type to check for reactions. |
