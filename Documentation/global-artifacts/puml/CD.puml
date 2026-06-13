@@ -148,6 +148,8 @@ HealthcareCenter "1" o-down- "0..*" Employee : employs >
 HealthcareCenter "1" o-down- "0..*" VaccineType : catalog >
 HealthcareCenter "1" o-down- "0..*" Vaccine : inventory >
 HealthcareCenter "1" o-down- "0..*" SNSUser : registry >
+HealthcareCenter "1" o-down- "0..*" SNSUser : waitingRoom >
+HealthcareCenter "1" o-down- "0..*" SNSUser : recoveryRoom >
 HealthcareCenter "1" o-down- "0..*" Appointment : schedule >
 
 Vaccine "0..*" -right- "1" VaccineType : is of >
