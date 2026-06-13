@@ -30,11 +30,6 @@ class EmployeeController {
     + updateEmployee(cc: string, newPhone: string, newEmail: string): bool
 }
 
-class SNSUserController {
-    + registerSNSUser(snsNumber: string, name: string, address: string, birthdate: string, phone: string, cc: string, sex: string): bool
-    + updateSNSUser(snsNumber: string, newAddress: string, newPhone: string): bool
-}
-
 class AppointmentController {
     + createAppointment(snsNumber: string, typeIndex: int, date: string, time: string): bool
     + checkUserExists(snsNumber: string): bool
@@ -139,14 +134,12 @@ class VaccinationProcess {
 
 MainMenu ..> VaccineController : uses >
 MainMenu ..> EmployeeController : uses >
-MainMenu ..> SNSUserController : uses >
 MainMenu ..> AppointmentController : uses >
 MainMenu ..> NurseController : uses >
 MainMenu ..> ExportController : uses >
 
 VaccineController --> "1" HealthcareCenter : updates >
 EmployeeController --> "1" HealthcareCenter : updates >
-SNSUserController --> "1" HealthcareCenter : updates >
 AppointmentController --> "1" HealthcareCenter : updates >
 NurseController --> "1" HealthcareCenter : updates/reads >
 ExportController --> "1" HealthcareCenter : reads >
