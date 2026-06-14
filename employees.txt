@@ -1,0 +1,4 @@
+Admin Chefe;911111111;admin@med.pt;11111111;Center Administrator
+Enfermeira Maria;922222222;maria@med.pt;22222222;Nurse
+Enfermeiro Joao;933333333;joao@med.pt;33333333;Nurse
+Rececionista Ana;944444444;ana@med.pt;44444444;Receptionist

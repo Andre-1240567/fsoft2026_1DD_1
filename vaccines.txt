@@ -1,0 +1,3 @@
+Comirnaty;Pfizer;LOT-A123;2027-12-31;500;C19
+Spikevax;Moderna;LOT-B456;2027-06-30;200;C19
+Vaxigrip;Sanofi;LOT-C789;2026-10-15;300;FLU
